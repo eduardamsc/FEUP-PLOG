@@ -29,7 +29,6 @@ displayrow(['barraX'|R]) :- write( '  X |'), !, displayrow(R).
 displayrow(['allDir'|R]) :- write( '  * |'), !, displayrow(R).
 displayrow(['right'|R]) :- write( '  > |'), !, displayrow(R).
 displayrow(['left'|R]) :- write( ' <  |'), !, displayrow(R).
-displayrow([H|R]) :- write('|'), write(H), write('|'), !, displayrow(R).
 
 printInitialSeparator:-write(' ----------------------------------').
 
