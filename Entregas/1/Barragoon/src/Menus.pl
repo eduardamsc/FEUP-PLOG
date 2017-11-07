@@ -1,5 +1,5 @@
 %-------------------------------%
-%-----------Game Menus----------%
+%-----------Menus----------%
 %-------------------------------%
 
 mainMenu :-
@@ -17,17 +17,23 @@ mainMenu :-
         write('|                ***************************                |'),nl,
         write('|                *        Main Menu        *                |'),nl,
         write('|                ***************************                |'),nl,
-        write('|                1 - Play                                   |'),nl,
-        write('|                2 - Rules                                  |'),nl,
-        write('|                3 - Quit                                   |'),nl,
+        write('|                Play:                                      |'),nl,
+        write('|                1 - Player vs Player                       |'),nl,
+        write('|                2 - Player vs Computer                     |'),nl,
+        write('|                3 - Computer vs Computer                   |'),nl,
+        write('|                                                           |'),nl,
+        write('|                4 - Rules                                  |'),nl,
+        write('|                5 - Quit                                   |'),nl,
         write('|                                                           |'),nl,
         write('|___________________________________________________________|'),nl,
         read(Option),
         get_code(_),
         (
-                Option = 1 -> gameMenu;
-                Option = 2 -> rulesMenu;
+                Option = 1;
+                Option = 2;
                 Option = 3;
+                Option = 4 -> rulesMenu;
+                Option = 5;
                 write(Option), nl,
                 write('ERROR : invalid input...'), spacing(1),
                 mainMenu

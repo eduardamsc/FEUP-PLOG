@@ -1,3 +1,7 @@
+%-------------------------------%
+%--------Useful functions-------%
+%-------------------------------%
+
 spacing(Lines) :-
         spacing(0, Lines).
 spacing(Line, Limit) :-

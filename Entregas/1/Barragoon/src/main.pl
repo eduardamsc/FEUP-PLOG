@@ -2,12 +2,23 @@
 
 :- include('Utilities.pl').
 :- include('Menus.pl').
+:- include('Logic.pl').
 :- use_module(library(system)).
 
+%--------------------------------%
+%-----------Barragoon -----------%
+%--------------------------------%
+%------- escreva startGame ------%
+%---- na consola para correr ----%
+%--------------------------------%
+%--------------------------------%
+
 startGame :-
+        clearScreen,
         mainMenu.
 
 display :- 
+        printTopAxis,nl,
         printInitialSeparator, nl,
         displayBoard([[empty, black4, black3, empty, black3, black4, empty],
  [empty, empty, black2, black3, black2, empty, empty],
@@ -39,3 +50,5 @@ displayrow(['right'|R]) :- write( '  > '), write('|'), !, displayrow(R).
 displayrow(['left'|R]) :- write( ' <  '), write('|'), !, displayrow(R).
 
 printInitialSeparator:-write(' ----------------------------------').
+
+printTopAxis:-write('   A    B    C    D    E    F    G').
