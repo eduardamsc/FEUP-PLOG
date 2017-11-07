@@ -1,5 +1,12 @@
 /* -*- Mode:Prolog; coding:iso-8859-1; indent-tabs-mode:nil; prolog-indent-width:8; prolog-paren-indent:3; tab-width:8; -*- */
 
+:- include('Utilities.pl').
+:- include('Menus.pl').
+:- use_module(library(system)).
+
+startGame :-
+        mainMenu.
+
 display :- 
         printInitialSeparator, nl,
         displayBoard([[empty, black4, black3, empty, black3, black4, empty],

@@ -9,4 +9,6 @@ spacing(_,_).
 
 next :-
         write('Press any key to continue...'),
-        get_single_char(_).
+        get_code(_), clearScreen.
+
+clearScreen :- spacing(50), !.
