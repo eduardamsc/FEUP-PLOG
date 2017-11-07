@@ -29,7 +29,7 @@ mainMenu :-
         read(Option),
         get_code(_),
         (
-                Option = 1;
+                Option = 1 -> display;
                 Option = 2;
                 Option = 3;
                 Option = 4 -> rulesMenu;

@@ -18,37 +18,39 @@ startGame :-
         mainMenu.
 
 display :- 
-        printTopAxis,nl,
-        printInitialSeparator, nl,
-        displayBoard([[empty, black4, black3, empty, black3, black4, empty],
- [empty, empty, black2, black3, black2, empty, empty],
- [empty, empty, empty, empty, empty, empty, empty],
- [empty, barraX, empty, empty, empty, barraX, empty],
- [barraX, empty, barraX, empty, barraX, empty, barraX],
- [empty, barraX, empty, empty, empty, barraX, empty],
- [empty, empty, empty, empty, empty, empty, empty],
- [empty, empty, white2, white3, white2, empty, empty],
- [empty, white4, white3, empty, white3, white4, empty]]).
+        clearScreen,
+        topAxis,nl,
+        horizontalBorder, nl,
+        displayBoard(
+                       [[empty, black4, black3, empty, black3, black4, empty],
+                        [empty, empty, black2, black3, black2, empty, empty],
+                        [empty, empty, empty, empty, empty, empty, empty],
+                        [empty, barraX, empty, empty, empty, barraX, empty],
+                        [barraX, empty, barraX, empty, barraX, empty, barraX],
+                        [empty, barraX, empty, empty, empty, barraX, empty],
+                        [empty, empty, empty, empty, empty, empty, empty],
+                        [empty, empty, white2, white3, white2, empty, empty],
+                        [empty, white4, white3, empty, white3, white4, empty]]).
 
 displayBoard([]).
 displayBoard([L|R]) :-
-   write('|'), displayrow(L), nl,
-   write(' ----------------------------------'), nl,
-  displayBoard(R).
+   border, displayrow(L), nl,
+   horizontalBorder, nl,
+   displayBoard(R).
 
 displayrow([]).
-displayrow(['empty'|R]) :- write('    '), write('|'), !, displayrow(R).
-displayrow(['white2'|R]) :- write(' w2 '), write('|'), !, displayrow(R).
-displayrow(['white3'|R]) :- write(' w3 '), write('|'), !, displayrow(R).
-displayrow(['white4'|R]) :- write(' w4 '), write('|'), !, displayrow(R).
-displayrow(['black2'|R]) :- write(' b2 '), write('|'), !, displayrow(R).
-displayrow(['black3'|R]) :- write(' b3 '), write('|'), !, displayrow(R).
-displayrow(['black4'|R]) :- write(' b4 '), write('|'), !, displayrow(R).
-displayrow(['barraX'|R]) :- write( '  X '), write('|'), !, displayrow(R).
-displayrow(['allDir'|R]) :- write( '  * '), write('|'), !, displayrow(R).
-displayrow(['right'|R]) :- write( '  > '), write('|'), !, displayrow(R).
-displayrow(['left'|R]) :- write( ' <  '), write('|'), !, displayrow(R).
+displayrow(['empty'|R]) :- write('    '), border, !, displayrow(R).
+displayrow(['white2'|R]) :- write(' w2 '), border, !, displayrow(R).
+displayrow(['white3'|R]) :- write(' w3 '), border, !, displayrow(R).
+displayrow(['white4'|R]) :- write(' w4 '), border, !, displayrow(R).
+displayrow(['black2'|R]) :- write(' b2 '), border, !, displayrow(R).
+displayrow(['black3'|R]) :- write(' b3 '), border, !, displayrow(R).
+displayrow(['black4'|R]) :- write(' b4 '), border, !, displayrow(R).
+displayrow(['barraX'|R]) :- write( '  X '), border, !, displayrow(R).
+displayrow(['allDir'|R]) :- write( '  * '), border, !, displayrow(R).
+displayrow(['right'|R]) :- write( '  > '), border, !, displayrow(R).
+displayrow(['left'|R]) :- write( ' <  '), border, !, displayrow(R).
 
-printInitialSeparator:-write(' ----------------------------------').
-
-printTopAxis:-write('   A    B    C    D    E    F    G').
+topAxis :- write('   A    B    C    D    E    F    G').
+horizontalBorder :- write(' ----------------------------------').
+border :- write('|').
