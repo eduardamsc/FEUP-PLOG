@@ -42,3 +42,8 @@ setListElemAtWith(I, Elem, [H|L], [H|ResL]):-
         I > 0,
         I1 is I-1,
         setListElemAtWith(I1, Elem, L, ResL).
+
+
+getCharThenEnter(CharInput) :-
+        get_char(CharInput),
+        get_char(_). 

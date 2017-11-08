@@ -1,12 +1,31 @@
 %-------------------------------%
-%-----------Menus----------%
+%-----------Menus---------------%
 %-------------------------------%
 
 mainMenu :-
+        displayMainMenu,
+
+        getCharThenEnter(Option),
+        (
+                Option = '1' -> startGamePvP;
+                Option = '2' -> startGamePvC;
+                Option = '3' -> startGameCvC;
+                Option = '4' -> rulesMenu;
+                Option = '5';
+
+                nl,
+                clearScreen,
+                write('ERROR : invalid input...'), spacing(1),
+		mainMenu
+        ).
+
+
+displayMainMenu :- 
         upperFrame,
+        titleFrame,
         write('|                ***************************                |'),nl,
         write('|                *        Main Menu        *                |'),nl,
-        write('|                ***************************                |'),nl,
+        write('|                ***************************                |'),nl,nl,
         write('|                Play:                                      |'),nl,
         write('|                1 - Player vs Player                       |'),nl,
         write('|                2 - Player vs Computer                     |'),nl,
@@ -14,25 +33,13 @@ mainMenu :-
         write('|                                                           |'),nl,
         write('|                4 - Rules                                  |'),nl,
         write('|                5 - Quit                                   |'),nl,
-        lowerFrame,
-        read(Option),
-        get_code(_),
-        (
-                Option = 1 -> display;
-                Option = 2;
-                Option = 3;
-                Option = 4 -> rulesMenu;
-                Option = 5;
-                write(Option), nl,
-                write('ERROR : invalid input...'), spacing(1),
-                mainMenu
-        ).
+        lowerFrame.
 
 rulesMenu :- 
         upperFrame,
         write('|                ***************************                |'),nl,
         write('|                *        Rules Menu       *                |'),nl,
-        write('|                ***************************                |'),nl,
+        write('|                ***************************                |'),nl,nl,
         write('|  1. A piece is captured if the oponent\'s piece finishes   |'),nl,
         write('|     in the same cell.                                     |'),nl,
         write('|  2. Captures are only allowed during a full move.         |'),nl,
@@ -45,7 +52,7 @@ rulesMenu :-
         write('|     the board, 1 per player and the first to place it is  |'),nl,
         write('|     the one whose tile was captured.                      |'),nl,
         write('|  6. Once a barragoon is placed, it can\'t be moved.        |'),nl, 
-        write('|  7. During a move, there can only be one 90º change of    |'),nl, 
+        write('|  7. During a move, there can only be one 90ï¿½ change of    |'),nl, 
         write('|     direction.                                            |'),nl,
         write('|  8. Movements can only be vertical or horizontal, never   |'),nl, 
         write('|     diagonal.                                             |'),nl,
@@ -55,7 +62,9 @@ rulesMenu :-
 
 upperFrame :- 
         write(' ___________________________________________________________'),nl,
-        write('|                                                           |'),nl,
+        write('|                                                           |'),nl.
+
+titleFrame :-
         write('|   ____                                                    |'), nl,                                               
         write('|  |  _ \\                                                   |'), nl,
         write('|  | |_) | __ _ _ __ _ __ __ _  __ _  ___   ___  _ __       |'), nl,
@@ -65,6 +74,7 @@ upperFrame :-
         write('|                               __/ |                       |'), nl,               
         write('|                              |___/                        |'), nl,
         write('|                                                           |'),nl.
+
 
 lowerFrame :-
         write('|                                                           |'),nl,
