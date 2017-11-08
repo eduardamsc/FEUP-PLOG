@@ -22,35 +22,55 @@ display :-
         topAxis,nl,
         horizontalBorder, nl,
         displayBoard(
-                       [[empty, black4, black3, empty, black3, black4, empty],
-                        [empty, empty, black2, black3, black2, empty, empty],
-                        [empty, empty, empty, empty, empty, empty, empty],
-                        [empty, barraX, empty, empty, empty, barraX, empty],
-                        [barraX, empty, barraX, empty, barraX, empty, barraX],
-                        [empty, barraX, empty, empty, empty, barraX, empty],
-                        [empty, empty, empty, empty, empty, empty, empty],
-                        [empty, empty, white2, white3, white2, empty, empty],
-                        [empty, white4, white3, empty, white3, white4, empty]]).
+                       [[um, empty, black4, black3, empty, black3, black4, empty],
+                        [dois, empty, empty, black2, black3, black2, empty, empty],
+                        [tres,empty, empty, empty, empty, empty, empty, empty],
+                        [quatro, empty, barraX, empty, empty, empty, barraX, empty],
+                        [cinco, barraX, empty, barraX, empty, barraX, empty, barraX],
+                        [seis, empty, barraX, empty, empty, empty, barraX, empty],
+                        [sete, empty, empty, empty, empty, empty, empty, empty],
+                        [oito, empty, empty, white2, white3, white2, empty, empty],
+                        [nove, empty, white4, white3, empty, white3, white4, empty]]).
 
 displayBoard([]).
 displayBoard([L|R]) :-
-   border, displayrow(L), nl,
+   displayrow(L),border, nl,
    horizontalBorder, nl,
    displayBoard(R).
 
 displayrow([]).
-displayrow(['empty'|R]) :- write('    '), border, !, displayrow(R).
-displayrow(['white2'|R]) :- write(' w2 '), border, !, displayrow(R).
-displayrow(['white3'|R]) :- write(' w3 '), border, !, displayrow(R).
-displayrow(['white4'|R]) :- write(' w4 '), border, !, displayrow(R).
-displayrow(['black2'|R]) :- write(' b2 '), border, !, displayrow(R).
-displayrow(['black3'|R]) :- write(' b3 '), border, !, displayrow(R).
-displayrow(['black4'|R]) :- write(' b4 '), border, !, displayrow(R).
-displayrow(['barraX'|R]) :- write( '  X '), border, !, displayrow(R).
-displayrow(['allDir'|R]) :- write( '  * '), border, !, displayrow(R).
-displayrow(['right'|R]) :- write( '  > '), border, !, displayrow(R).
-displayrow(['left'|R]) :- write( ' <  '), border, !, displayrow(R).
+displayrow(['empty'|R]) :- border, write('    '), !, displayrow(R).
+displayrow(['white2'|R]) :- border, write(' w2 '), !, displayrow(R).
+displayrow(['white3'|R]) :- border, write(' w3 '), !, displayrow(R).
+displayrow(['white4'|R]) :- border, write(' w4 '), !, displayrow(R).
+displayrow(['black2'|R]) :- border, write(' b2 '), !, displayrow(R).
+displayrow(['black3'|R]) :- border, write(' b3 '), !, displayrow(R).
+displayrow(['black4'|R]) :- border, write(' b4 '), !, displayrow(R).
+displayrow(['barraX'|R]) :- border, write('  X '), !, displayrow(R).
+displayrow(['allDir'|R]) :- border, write('  * '), !, displayrow(R).
+displayrow(['right'|R]) :- border, write('  > '), !, displayrow(R).
+displayrow(['left'|R]) :- border, write(' <  '), !, displayrow(R).
+displayrow(['um'|R]) :- write('1'), !, displayrow(R).
+displayrow(['dois'|R]) :- write('2'), !, displayrow(R).
+displayrow(['tres'|R]) :- write('3'), !, displayrow(R).
+displayrow(['quatro'|R]) :- write('4'), !, displayrow(R).
+displayrow(['cinco'|R]) :- write('5'), !, displayrow(R).
+displayrow(['seis'|R]) :- write('6'), !, displayrow(R).
+displayrow(['sete'|R]) :- write('7'), !, displayrow(R).
+displayrow(['oito'|R]) :- write('8'), !, displayrow(R).
+displayrow(['nove'|R]) :- write('9'), !, displayrow(R).
 
-topAxis :- write('   A    B    C    D    E    F    G').
-horizontalBorder :- write(' ----------------------------------').
+topAxis :- write('    A    B    C    D    E    F    G').
+horizontalBorder :- write('  ----------------------------------').
 border :- write('|').
+
+getPeca(I, L, E) :- nth0(I, L, E).
+
+getPecaLinha([L|Ls],Linha,Coluna,Peca):-Linha == 1, getPecaColuna(L,Coluna,Peca).
+getPecaLinha([L|Ls],Linha,Coluna,Peca):-NLinha is Linha - 1,
+                                    getPecaLinha(Ls,NLinha,Coluna,Peca).
+
+getPecaColuna([L|Ls],Coluna,Peca):-Coluna == 1,
+                                Peca = L.
+getPecaColuna([L|Ls],Coluna,Peca):-NColuna is Coluna - 1,
+                                getPecaColuna(Ls,NColuna,Peca).

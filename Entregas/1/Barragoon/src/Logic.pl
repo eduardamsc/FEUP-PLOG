@@ -2,6 +2,3 @@
 %-----------Game Logic----------%
 %-------------------------------%
 
-validMove.
-availableMoves.
-move.
