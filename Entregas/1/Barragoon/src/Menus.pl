@@ -4,7 +4,6 @@
 
 mainMenu :-
         displayMainMenu,
-
         getCharThenEnter(Option),
         (
                 Option = '1' -> startGamePvP;
@@ -13,19 +12,17 @@ mainMenu :-
                 Option = '4' -> rulesMenu;
                 Option = '5';
 
-                nl,
                 clearScreen,
                 write('ERROR : invalid input...'), spacing(1),
 		mainMenu
         ).
-
 
 displayMainMenu :- 
         upperFrame,
         titleFrame,
         write('|                ***************************                |'),nl,
         write('|                *        Main Menu        *                |'),nl,
-        write('|                ***************************                |'),nl,nl,
+        write('|                ***************************                |'),nl,
         write('|                Play:                                      |'),nl,
         write('|                1 - Player vs Player                       |'),nl,
         write('|                2 - Player vs Computer                     |'),nl,
@@ -39,7 +36,7 @@ rulesMenu :-
         upperFrame,
         write('|                ***************************                |'),nl,
         write('|                *        Rules Menu       *                |'),nl,
-        write('|                ***************************                |'),nl,nl,
+        write('|                ***************************                |'),nl,
         write('|  1. A piece is captured if the oponent\'s piece finishes   |'),nl,
         write('|     in the same cell.                                     |'),nl,
         write('|  2. Captures are only allowed during a full move.         |'),nl,
@@ -75,7 +72,23 @@ titleFrame :-
         write('|                              |___/                        |'), nl,
         write('|                                                           |'),nl.
 
-
 lowerFrame :-
         write('|                                                           |'),nl,
         write('|___________________________________________________________|'),nl.
+
+whitePlayerTurn :-
+        write('***************************'),nl,
+        write('*       White Player      *'),nl,
+        write('***************************'),nl,
+        chooseTile.
+
+blackPlayerTurn :-
+        write('***************************'),nl,
+        write('*       Black Player      *'),nl,
+        write('***************************'),nl,
+        chooseTile.
+
+chooseTile :-
+         write('Which tile would you like to move?'), nl,
+        get_char(Collumn),
+        get_code(Line).

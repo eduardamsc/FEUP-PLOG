@@ -17,6 +17,10 @@ next :-
 
 clearScreen :- spacing(50), !.
 
+getCharThenEnter(CharInput) :-
+        get_char(CharInput),
+        get_char(_). 
+
 getMatrixElemAt(0, ElemCol, [ListAtTheHead|_], Elem):-
         getListElemAt(ElemCol, ListAtTheHead, Elem).
 getMatrixElemAt(ElemRow, ElemCol, [_|RemainingLists], Elem):-
@@ -43,7 +47,12 @@ setListElemAtWith(I, Elem, [H|L], [H|ResL]):-
         I1 is I-1,
         setListElemAtWith(I1, Elem, L, ResL).
 
+move(Player, Board, X, Y, NewBoard) :-
+  nth0(X, Board, Row, T1),
+  nth0(Y, Row, ' ', T2),
+  nth0(Y, NewRow, Player, T2),
+  nth0(X, NewBoard, NewRow, T1).
 
-getCharThenEnter(CharInput) :-
-        get_char(CharInput),
-        get_char(_). 
+freecells(Board, [X, Y]) :-
+  nth0(X, Board, Row),
+  nth0(Y, Row, ' ').

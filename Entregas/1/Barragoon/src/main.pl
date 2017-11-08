@@ -1,5 +1,3 @@
-/* -*- Mode:Prolog; coding:iso-8859-1; indent-tabs-mode:nil; prolog-indent-width:8; prolog-paren-indent:3; tab-width:8; -*- */
-
 :- include('Utilities.pl').
 :- include('Menus.pl').
 :- include('Logic.pl').
@@ -63,14 +61,3 @@ displayrow(['nove'|R]) :- write('9'), !, displayrow(R).
 topAxis :- write('    A    B    C    D    E    F    G').
 horizontalBorder :- write('  ----------------------------------').
 border :- write('|').
-
-getPeca(I, L, E) :- nth0(I, L, E).
-
-getPecaLinha([L|Ls],Linha,Coluna,Peca):-Linha == 1, getPecaColuna(L,Coluna,Peca).
-getPecaLinha([L|Ls],Linha,Coluna,Peca):-NLinha is Linha - 1,
-                                    getPecaLinha(Ls,NLinha,Coluna,Peca).
-
-getPecaColuna([L|Ls],Coluna,Peca):-Coluna == 1,
-                                Peca = L.
-getPecaColuna([L|Ls],Coluna,Peca):-NColuna is Coluna - 1,
-                                getPecaColuna(Ls,NColuna,Peca).
