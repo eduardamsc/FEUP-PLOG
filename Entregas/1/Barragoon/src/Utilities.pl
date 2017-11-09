@@ -2,6 +2,7 @@
 %--------Useful functions-------%
 %-------------------------------%
 
+% --- VISUALIZATION ---
 spacing(Lines) :-
         spacing(0, Lines).
 spacing(Line, Limit) :-
@@ -11,52 +12,41 @@ spacing(Line, Limit) :-
         spacing(LineInc, Limit).
 spacing(_,_).
 
+clearScreen :- spacing(50), !.
+
+
+% --- RECEIVE INPUT ---
 next :-
         write('Press any key to continue...'),
         get_code(_), clearScreen.
 
-clearScreen :- spacing(50), !.
-
-getCharThenEnter(CharInput) :-
-        get_char(CharInput),
+getCharThenEnter(X) :-
+        get_char(X),
         get_char(_). 
 
-getMatrixElemAt(0, ElemCol, [ListAtTheHead|_], Elem):-
-        getListElemAt(ElemCol, ListAtTheHead, Elem).
-getMatrixElemAt(ElemRow, ElemCol, [_|RemainingLists], Elem):-
-        ElemRow > 0,
-        ElemRow1 is ElemRow-1,
-        getMatrixElemAt(ElemRow1, ElemCol, RemainingLists, Elem).
+getPosition(X, Y) :-
+        get_char(X),
+        get_code(Y),
+        get_char(_),
+        
+        isCollumn(X),
+        write(X),
+        isLine(Y).
+       % -- (   Y < 49 -> write('Line can\'t be inferior to 1!');
+          % --  Y > 60 -> write('Line can\'t be over 9!');
+           % -- write('Valid line!')
+              % ---     ).
 
-getListElemAt(0, [ElemAtTheHead|_], ElemAtTheHead).
-getListElemAt(Pos, [_|RemainingElems], Elem):-
-        Pos > 0,
-        Pos1 is Pos-1,
-        getListElemAt(Pos1, RemainingElems, Elem).
+% --- CHECK IF POSITION IS VALID ---
+isCollumn(X):-
+    member(X, "abcdefgABCDEFG").
 
-setMatrixElemAtWith(0, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [NewRowAtTheHead|RemainingRows]):-
-        setListElemAtWith(ElemCol, NewElem, RowAtTheHead, NewRowAtTheHead).
-setMatrixElemAtWith(ElemRow, ElemCol, NewElem, [RowAtTheHead|RemainingRows], [RowAtTheHead|ResultRemainingRows]):-
-        ElemRow > 0,
-        ElemRow1 is ElemRow-1,
-        setMatrixElemAtWith(ElemRow1, ElemCol, NewElem, RemainingRows, ResultRemainingRows).
+isLine(Y):-
+    Y > 49, Y < 60.
 
-setListElemAtWith(0, Elem, [_|L], [Elem|L]).
-setListElemAtWith(I, Elem, [H|L], [H|ResL]):-
-        I > 0,
-        I1 is I-1,
-        setListElemAtWith(I1, Elem, L, ResL).
 
-move(Player, Board, X, Y, NewBoard) :-
-  nth0(X, Board, Row, T1),
-  nth0(Y, Row, ' ', T2),
-  nth0(Y, NewRow, Player, T2),
-  nth0(X, NewBoard, NewRow, T1).
 
-%===============================================%
-%=============   Codigo novo   =================%
-%===============================================%
-
+% --- OTHERS ---
 
 % replace(+List,+Index,+Value,-NewList).
 replaceInList([_|T], 0, X, [X|T]).

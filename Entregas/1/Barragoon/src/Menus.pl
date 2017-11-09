@@ -7,8 +7,8 @@ mainMenu :-
         getCharThenEnter(Option),
         (
                 Option = '1' -> startGamePvP;
-                Option = '2' -> startGamePvC;
-                Option = '3' -> startGameCvC;
+                Option = '2';
+                Option = '3';
                 Option = '4' -> rulesMenu;
                 Option = '5';
 
@@ -90,5 +90,4 @@ blackPlayerTurn :-
 
 chooseTile :-
          write('Which tile would you like to move?'), nl,
-        get_char(Collumn),
-        get_code(Line).
+         getPosition(Column, Line).

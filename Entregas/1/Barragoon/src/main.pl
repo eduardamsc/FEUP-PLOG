@@ -11,10 +11,12 @@
 %--------------------------------%
 %--------------------------------%
 
+% --- START ---
 startGame :-
         clearScreen,
         mainMenu.
 
+% --- OTHERS ---
 display :- 
         clearScreen,
         topAxis,nl,
@@ -32,32 +34,35 @@ display :-
 
 displayBoard([]).
 displayBoard([L|R]) :-
-   displayrow(L),border, nl,
-   horizontalBorder, nl,
-   displayBoard(R).
+        translate(L),border, nl,
+        horizontalBorder, nl,
+        displayBoard(R).
 
-displayrow([]).
-displayrow(['empty'|R]) :- border, write('    '), !, displayrow(R).
-displayrow(['white2'|R]) :- border, write(' w2 '), !, displayrow(R).
-displayrow(['white3'|R]) :- border, write(' w3 '), !, displayrow(R).
-displayrow(['white4'|R]) :- border, write(' w4 '), !, displayrow(R).
-displayrow(['black2'|R]) :- border, write(' b2 '), !, displayrow(R).
-displayrow(['black3'|R]) :- border, write(' b3 '), !, displayrow(R).
-displayrow(['black4'|R]) :- border, write(' b4 '), !, displayrow(R).
-displayrow(['barraX'|R]) :- border, write('  X '), !, displayrow(R).
-displayrow(['allDir'|R]) :- border, write('  * '), !, displayrow(R).
-displayrow(['right'|R]) :- border, write('  > '), !, displayrow(R).
-displayrow(['left'|R]) :- border, write(' <  '), !, displayrow(R).
-displayrow(['um'|R]) :- write('1'), !, displayrow(R).
-displayrow(['dois'|R]) :- write('2'), !, displayrow(R).
-displayrow(['tres'|R]) :- write('3'), !, displayrow(R).
-displayrow(['quatro'|R]) :- write('4'), !, displayrow(R).
-displayrow(['cinco'|R]) :- write('5'), !, displayrow(R).
-displayrow(['seis'|R]) :- write('6'), !, displayrow(R).
-displayrow(['sete'|R]) :- write('7'), !, displayrow(R).
-displayrow(['oito'|R]) :- write('8'), !, displayrow(R).
-displayrow(['nove'|R]) :- write('9'), !, displayrow(R).
+translate([]).
+translate(['empty'|R]) :- border, write('    '), !, translate(R).
+translate(['white2'|R]) :- border, write(' w2 '), !, translate(R).
+translate(['white3'|R]) :- border, write(' w3 '), !, translate(R).
+translate(['white4'|R]) :- border, write(' w4 '), !, translate(R).
+translate(['black2'|R]) :- border, write(' b2 '), !, translate(R).
+translate(['black3'|R]) :- border, write(' b3 '), !, translate(R).
+translate(['black4'|R]) :- border, write(' b4 '), !, translate(R).
+translate(['barraX'|R]) :- border, write('  X '), !, translate(R).
+translate(['allDir'|R]) :- border, write('  * '), !, translate(R).
+translate(['right'|R]) :- border, write('  > '), !, translate(R).
+translate(['left'|R]) :- border, write(' <  '), !, translate(R).
+translate(['um'|R]) :- write('1'), !, translate(R).
+translate(['dois'|R]) :- write('2'), !, translate(R).
+translate(['tres'|R]) :- write('3'), !, translate(R).
+translate(['quatro'|R]) :- write('4'), !, translate(R).
+translate(['cinco'|R]) :- write('5'), !, translate(R).
+translate(['seis'|R]) :- write('6'), !, translate(R).
+translate(['sete'|R]) :- write('7'), !, translate(R).
+translate(['oito'|R]) :- write('8'), !, translate(R).
+translate(['nove'|R]) :- write('9'), !, translate(R).
 
-topAxis :- write('    A    B    C    D    E    F    G').
-horizontalBorder :- write('  ----------------------------------').
-border :- write('|').
+topAxis :- 
+        write('    A    B    C    D    E    F    G').
+horizontalBorder :- 
+        write('  ----------------------------------').
+border :- 
+        write('|').
