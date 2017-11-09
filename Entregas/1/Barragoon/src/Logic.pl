@@ -10,45 +10,17 @@
         GameMode - PvP, PvC or CvC;
        */
 
-
-
 startGamePvP:-
 	initializeGamePvP(Game),
-	playGame.
-
-startGamePvC:-
-	initializeGamePvC(Game),
-	playGame(Game).
-
-startGameCvC:-
-	initializeGameCvC(Game),
 	playGame(Game).
 
 initializeGamePvP(Game):-
-	initialBoard(GameBoard),
-	Game = [GameBoard, pvp], !.
+	displayBoard(Board),
+	Game = [Board, pvp], !.
 
-initializeGamePvC(Game):-
-	initialBoard(GameBoard),
-	Game = [GameBoard, pvc], !.
-
-initializeGameCvC(Game):-
-	initialBoard(GameBoard),
-	Game = [GameBoard, cvc], !.
-
-initialBoard([[um, empty, black4, black3, empty, black3, black4, empty],
-	      [dois, empty, empty, black2, black3, black2, empty, empty],
-	      [tres,empty, empty, empty, empty, empty, empty, empty],
-	      [quatro, empty, barraX, empty, empty, empty, barraX, empty],
-	      [cinco, barraX, empty, barraX, empty, barraX, empty, barraX],
-	      [seis, empty, barraX, empty, empty, empty, barraX, empty],
-	      [sete, empty, empty, empty, empty, empty, empty, empty],
-	      [oito, empty, empty, white2, white3, white2, empty, empty],
-	      [nove, empty, white4, white3, empty, white3, white4, empty]]).
-
-playGame :-
+playGame(Game) :-
 	whitePlayerTurn.
-        playloopHH(_, Board) :- display(Board),nl, write('White won!!'),  nl.
+       %-- playloopHH(_, Board) :- display(Board),nl, write('White won!!'),  nl.
 
 
 playloopHH(Player, Board) :-
