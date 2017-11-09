@@ -53,6 +53,25 @@ move(Player, Board, X, Y, NewBoard) :-
   nth0(Y, NewRow, Player, T2),
   nth0(X, NewBoard, NewRow, T1).
 
-freecells(Board, [X, Y]) :-
-  nth0(X, Board, Row),
-  nth0(Y, Row, ' ').
+%===============================================%
+%=============   Codigo novo   =================%
+%===============================================%
+
+
+% replace(+List,+Index,+Value,-NewList).
+replaceInList([_|T], 0, X, [X|T]).
+replaceInList([H|T], I, X, [H|R]):- I > -1, NI is I-1, replaceInList(T, NI, X, R), !.
+replaceInList(L, _, _, L).
+
+clearCell(Board, NRow, NColumn, Value, NewBoard) :-
+  nth0(NRow, Board, Row),
+  nth1(NColumn, Row, Value),
+  
+  replaceInList(Row, NColumn, empty, NewRow),
+  replaceInList(Board, NRow, NewRow, NewBoard).
+
+setCell(Board, NRow, NColumn, Value, NewBoard) :-
+  nth0(NRow, Board, Row),
+  
+  replaceInList(Row, NColumn, Value, NewRow),
+  replaceInList(Board, NRow, NewRow, NewBoard).
