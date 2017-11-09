@@ -15,15 +15,16 @@ startGamePvP:-
 	playGame(Game).
 
 initializeGamePvP(Game):-
-	displayBoard(Board),
+	initialBoard(Board),
 	Game = [Board, pvp], !.
 
 playGame(Game) :-
-	whitePlayerTurn.
-       %-- playloopHH(_, Board) :- display(Board),nl, write('White won!!'),  nl.
+	nth0(0, Game, GameBoard),
+	playerTurn(GameBoard, GameBoardAfterWhite, whitePlayer),
+	write('ACABOU TURNO BRANCO'),
+	playerTurn(GameBoardAfterWhite, GameBoardAfterBlack, blackPlayer).
 
-
-playloopHH(_, Board) :- 
+/*playloopHH(_, Board) :- 
 	display(Board),nl, write('White won!!'),  nl.
 
 playloopHH(Player, Board) :-
@@ -40,9 +41,27 @@ humanplayer(P, Board, NewBoard) :-
 
 humanplayer(P, Board, NewBoard) :-
   write('Invalid move. Try again.'), nl,
-  humanplayer(P, Board, NewBoard).
+  humanplayer(P, Board, NewBoard).*/
 
 
+playerTurn(GameBoard, NewGameBoard, Player) :- 
+                displayGame(GameBoard),
+
+                displayPlayerTurn(Player),
+
+                chooseTile(RowSrc, ColSrc, 'Which tile would you like to move?'),
+                
+                /*
+                /*validateTile(Row, Column) -> make sure the position corresponds to a piece of the player*/
+
+                chooseTile(RowDest, ColDest, 'Where do you want to move the tile?'),
+
+                /*validateDestTile -> Empty or with Barragoon pieces*/
+
+                /*validateMove() -> validate move acording to the rules.*/
+				!,
+				write('moveFromSrcToDest'),
+                moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard).
 
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
         clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),

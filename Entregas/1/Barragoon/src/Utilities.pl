@@ -1,3 +1,6 @@
+
+:- use_module(library(lists)).
+
 %-------------------------------%
 %--------Useful functions-------%
 %-------------------------------%
@@ -22,26 +25,58 @@ next :-
 
 getCharThenEnter(X) :-
         get_char(X),
-        get_char(_). 
+        get_char(_), !. 
 
-getPosition(X, Y) :-
-        get_char(X),
-        get_code(Y),
-        get_char(_),
+getCodeThenEnter(X) :-
+        get_code(X),
+        get_char(_), !.
+
+
+%readCharFromUser(-X, +Possibilities, +Message, +Error)
+readCharFromUser(X, Possibilities, Message, Error) :- 
+
+        write(Message),
+        getCharThenEnter(X),
         
-        isCollumn(X),
-        write(X),
-        isLine(Y).
-       % -- (   Y < 49 -> write('Line can\'t be inferior to 1!');
-          % --  Y > 60 -> write('Line can\'t be over 9!');
-           % -- write('Valid line!')
-              % ---     ).
+        member(X, Possibilities).
+
+readCharFromUser(X, Possibilities, Message, Error) :- 
+
+        !,
+        write(Error),
+        readCharFromUser(X, Possibilities, Message, Error).
+
+%readCodeFromUser(-X, +Condition, +Message, +Error)
+readCodeFromUser(X, Condition, Message, Error) :- 
+
+        write(Message),
+        getCodeThenEnter(X),
+        
+        Condition.
+
+readCodeFromUser(X, Condition, Message, Error) :- 
+
+        !,
+        write(Error),
+        readCodeFromUser(X, Condition, Message, Error).
+
+
+
+
+
+getPositionFromUser(Row, Column) :-
+
+        readCodeFromUser(Row, validRow(Row), 'Row: ', 'Invalid Row! Rows must be between 1 and 9.\n'),
+        !,
+        validColumns(ValidCols),
+        readCharFromUser(Column, ValidCols, 'Column: ', 'Invalid Column! Columns must be between A and G.\n').
+
+        
 
 % --- CHECK IF POSITION IS VALID ---
-isCollumn(X):-
-    member(X, "abcdefgABCDEFG").
+validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
 
-isLine(Y):-
+validRow(Y):-
     Y > 49, Y < 60.
 
 
@@ -65,3 +100,10 @@ setCell(Board, NRow, NColumn, Value, NewBoard) :-
   
   replaceInList(Row, NColumn, Value, NewRow),
   replaceInList(Board, NRow, NewRow, NewBoard).
+
+
+ifelse(Condition, If, _Else) :- Condition, !, If.
+ifelse(_, _, Else) :- Else.
+
+not(X) :- X, !, fail.
+not(_X).
