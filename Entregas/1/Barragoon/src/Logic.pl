@@ -21,7 +21,6 @@ initializeGamePvP(Game):-
 playGame(Game) :-
 	nth0(0, Game, GameBoard),
 	playerTurn(GameBoard, GameBoardAfterWhite, whitePlayer),
-	write('ACABOU TURNO BRANCO'),
 	playerTurn(GameBoardAfterWhite, GameBoardAfterBlack, blackPlayer).
 
 playerTurn(GameBoard, NewGameBoard, Player) :- 
@@ -39,31 +38,24 @@ playerTurn(GameBoard, NewGameBoard, Player) :-
         /*validateDestTile -> Empty or with Barragoon pieces*/
 
         /*validateMove() -> validate move acording to the rules.*/
-	!,
-	(
-           ColSrc = 'a', ColSrc = 'A' -> ColSrc is 2;
-           ColSrc = 'b', ColSrc = 'B' -> ColSrc is 3;
-           ColSrc = 'c', ColSrc = 'C' -> ColSrc is 4;
-           ColSrc = 'd', ColSrc = 'D' -> ColSrc is 5;
-           ColSrc = 'e', ColSrc = 'E' -> ColSrc is 6;
-           ColSrc = 'f', ColSrc = 'F' -> ColSrc is 7;
-           ColSrc = 'g', ColSrc = 'G' -> ColSrc is 8;
-	   
-	   ColDest = 'a', ColDest = 'A' ->ColDest is 2;
-           ColDest = 'b', ColDest = 'B' -> ColDest is 3;
-           ColDest = 'c', ColDest = 'C' -> ColDest is 4;
-           ColDest = 'd', ColDest = 'D' -> ColDest is 5;
-           ColDest = 'e', ColDest = 'E' -> ColDest is 6;
-           ColDest = 'f', ColDest = 'F' -> ColDest is 7;
-           ColDest = 'g', ColDest = 'G' -> ColDest is 8;
-	   write('I hope you have chosen well!'), nl
-        ),
-        moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard),
-	nl,write('movi'),nl.
+        !,
+
+        validColumns(Possibilities),
+
+        nth0(ColSrcPosInPossibilities, Possibilities, ColSrc),
+        nth0(ColDestPosInPossibilities, Possibilities, ColDest),
+
+        /*Tranform letters and ascii codes to Row and Column Indexes*/
+        ColSrcPos is ColSrcPosInPossibilities mod 7, 
+        ColDestPos is ColDestPosInPossibilities mod 7,
+        RowSrcPos is RowSrc-49,
+        RowDestPos is RowDest-49,
+
+        moveFromSrcToDest(GameBoard, RowSrcPos, ColSrcPos, RowDestPos, ColDestPos, NewGameBoard).
+        
 
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
         clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),
-	nl,write('dei clear'),nl,
         setCell(NewGameBoard1,RowDest, ColDest, Value, NewGameBoard).
 
 

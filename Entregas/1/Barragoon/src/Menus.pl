@@ -50,7 +50,7 @@ rulesMenu :-
         write('|     the board, 1 per player and the first to place it is  |'),nl,
         write('|     the one whose tile was captured.                      |'),nl,
         write('|  6. Once a barragoon is placed, it can\'t be moved.        |'),nl, 
-        write('|  7. During a move, there can only be one 90º change of    |'),nl, 
+        write('|  7. During a move, there can only be one 90ï¿½ change of    |'),nl, 
         write('|     direction.                                            |'),nl,
         write('|  8. Movements can only be vertical or horizontal, never   |'),nl, 
         write('|     diagonal.                                             |'),nl,
@@ -100,28 +100,36 @@ chooseTile(Row, Column, Message) :-
         getPositionFromUser(Row, Column).
 
         
-initialBoard(   [[um, empty, black4, black3, empty, black3, black4, empty],
-                [dois, empty, empty, black2, black3, black2, empty, empty],
-                [tres,empty, empty, empty, empty, empty, empty, empty],
-                [quatro, empty, barraX, empty, empty, empty, barraX, empty],
-                [cinco, barraX, empty, barraX, empty, barraX, empty, barraX],
-                [seis, empty, barraX, empty, empty, empty, barraX, empty],
-                [sete, empty, empty, empty, empty, empty, empty, empty],
-                [oito, empty, empty, white2, white3, white2, empty, empty],
-                [nove, empty, white4, white3, empty, white3, white4, empty]]).
+initialBoard(   [[empty, black4, black3, empty, black3, black4, empty],
+                [empty, empty, black2, black3, black2, empty, empty],
+                [empty, empty, empty, empty, empty, empty, empty],
+                [empty, barraX, empty, empty, empty, barraX, empty],
+                [barraX, empty, barraX, empty, barraX, empty, barraX],
+                [empty, barraX, empty, empty, empty, barraX, empty],
+                [empty, empty, empty, empty, empty, empty, empty],
+                [empty, empty, white2, white3, white2, empty, empty],
+                [empty, white4, white3, empty, white3, white4, empty]]).
+
+
 
 displayGame(Board) :- 
         clearScreen,
         topAxis,nl,
         horizontalBorder, nl,
-        displayBoard(Board).
 
+        rowNumbers(RowNumbers),
 
-displayBoard([]).
-displayBoard([L|R]) :-
-        translate(L),border, nl,
+        displayBoard(Board, RowNumbers).
+
+rowNumbers([um, dois, tres,quatro, cinco, seis, sete, oito, nove]).
+
+displayBoard([], []).
+displayBoard([RowToDisplay|RemainingBoard], [RowToDisplayNumber|RemainingRowNumbers]) :-
+
+        translate([RowToDisplayNumber]),
+        translate(RowToDisplay),border, nl,
         horizontalBorder, nl,
-        displayBoard(R).
+        displayBoard(RemainingBoard, RemainingRowNumbers).
 
 translate([]).
 translate(['empty'|R]) :- border, write('    '), !, translate(R).

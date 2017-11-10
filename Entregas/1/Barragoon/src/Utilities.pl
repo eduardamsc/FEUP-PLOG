@@ -17,6 +17,13 @@ spacing(_,_).
 
 clearScreen :- spacing(50), !.
 
+appendNumbersToBoard([], []]).
+appendNumbersToBoard([FirstRow|RemainingBoard], Board) :-
+
+        append(Board, [1|FirstRow]),
+
+
+
 
 % --- RECEIVE INPUT ---
 next :-
@@ -84,21 +91,23 @@ replaceInList([_|T], 0, X, [X|T]).
 replaceInList([H|T], I, X, [H|R]):- I > -1, NI is I-1, replaceInList(T, NI, X, R), !.
 replaceInList(L, _, _, L).
 
+%clearCell(+Board, +NRow, +NColumn, -Value, -NewBoard)
 clearCell(Board, NRow, NColumn, Value, NewBoard) :-
-        nl,write('ERRO'),nl,
-  nth0(NRow, Board, Row),
-  nl,write('aqui1'),nl,
-  nth1(NColumn, Row, Value),
-  nl,write('aqui2'),nl,
-  replaceInList(Row, NColumn, empty, NewRow),
-  nl,write('aqui3'),nl,
-  replaceInList(Board, NRow, NewRow, NewBoard).
+        /*Get Value*/
+        nth0(NRow, Board, Row),
+        nth0(NColumn, Row, Value),
 
+        /*Clear cell*/
+        replaceInList(Row, NColumn, empty, NewRow),
+        replaceInList(Board, NRow, NewRow, NewBoard).
+
+%setCell(+Board, +NRow, +NColumn, +Value, -NewBoard)
 setCell(Board, NRow, NColumn, Value, NewBoard) :-
-  nth0(NRow, Board, Row),
-  
-  replaceInList(Row, NColumn, Value, NewRow),
-  replaceInList(Board, NRow, NewRow, NewBoard).
+        nth0(NRow, Board, Row),
+
+        /*Set cell with Value*/
+        replaceInList(Row, NColumn, Value, NewRow),
+        replaceInList(Board, NRow, NewRow, NewBoard).
 
 
 ifelse(Condition, If, _Else) :- Condition, !, If.
