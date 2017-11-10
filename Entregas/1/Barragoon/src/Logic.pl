@@ -16,14 +16,48 @@ startGamePvP:-
 
 initializeGamePvP(Game):-
 	initialBoard(Board),
-	Game = [Board, pvp], !.
+	Game = [Board, whitePlayer, pvp], !.
+
+getBoard(Game, GameBoard):-
+  nth0(0, Game, GameBoard).
+
+getCurrentPlayer(Game, CurrentPlayer):-
+  nth0(1, Game, CurrentPlayer).
+
+getGameMode(Game, Mode):-
+  nth0(2, Game, Mode).
+
+setBoard(Game, NewBoard, NewGame):-
+  replaceInList(Game, 0, NewBoard, NewGame).
+
+switchPlayer(Game, NextPlayerGame):-
+
+  getBoard(Game, Board),
+  getCurrentPlayer(Game, CurrentPlayer),
+  getGameMode(Game, Mode),
+
+  ifelse( CurrentPlayer == whitePlayer ,
+    
+      NextPlayer = blackPlayer,
+      NextPlayer = whitePlayer),
+
+  NextPlayerGame = [Board, NextPlayer, Mode].
+  
+
+
 
 playGame(Game) :-
-	nth0(0, Game, GameBoard),
-	playerTurn(GameBoard, GameBoardAfterWhite, whitePlayer),
-	playerTurn(GameBoardAfterWhite, GameBoardAfterBlack, blackPlayer).
 
-playerTurn(GameBoard, NewGameBoard, Player) :- 
+	playerTurn(Game, UpdatedGame),
+
+  switchPlayer(UpdatedGame, NextPlayerGame),
+  playGame(NextPlayerGame).
+
+playerTurn(Game, NewGame) :- 
+
+      	getBoard(Game, GameBoard),
+        getCurrentPlayer(Game, Player),
+
         displayGame(GameBoard),
 
         displayPlayerTurn(Player),
@@ -51,7 +85,9 @@ playerTurn(GameBoard, NewGameBoard, Player) :-
         RowSrcPos is RowSrc-49,
         RowDestPos is RowDest-49,
 
-        moveFromSrcToDest(GameBoard, RowSrcPos, ColSrcPos, RowDestPos, ColDestPos, NewGameBoard).
+        moveFromSrcToDest(GameBoard, RowSrcPos, ColSrcPos, RowDestPos, ColDestPos, NewGameBoard),
+
+        setBoard(Game, NewGameBoard, NewGame).
         
 
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-

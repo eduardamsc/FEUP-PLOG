@@ -17,11 +17,6 @@ spacing(_,_).
 
 clearScreen :- spacing(50), !.
 
-appendNumbersToBoard([], []]).
-appendNumbersToBoard([FirstRow|RemainingBoard], Board) :-
-
-        append(Board, [1|FirstRow]),
-
 
 
 
@@ -86,7 +81,7 @@ validRow(Y):-
 
 % --- OTHERS ---
 
-% replace(+List,+Index,+Value,-NewList).
+%replaceInList(+List,+Index,+Value,-NewList).
 replaceInList([_|T], 0, X, [X|T]).
 replaceInList([H|T], I, X, [H|R]):- I > -1, NI is I-1, replaceInList(T, NI, X, R), !.
 replaceInList(L, _, _, L).
