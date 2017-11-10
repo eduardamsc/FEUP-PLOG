@@ -41,13 +41,21 @@ playerTurn(GameBoard, NewGameBoard, Player) :-
         /*validateMove() -> validate move acording to the rules.*/
 	!,
 	(
-           RowSrc = 'a', RowSrc = 'A' -> RowSrc is 2;
-           RowSrc = 'b', RowSrc = 'B' -> RowSrc is 3;
-           RowSrc = 'c', RowSrc = 'C' -> RowSrc is 4;
-           RowSrc = 'd', RowSrc = 'D' -> RowSrc is 5;
-           RowSrc = 'e', RowSrc = 'E' -> RowSrc is 6;
-           RowSrc = 'f', RowSrc = 'F' -> RowSrc is 7;
-           RowSrc = 'g', RowSrc = 'G' -> RowSrc is 8;
+           ColSrc = 'a', ColSrc = 'A' -> ColSrc is 2;
+           ColSrc = 'b', ColSrc = 'B' -> ColSrc is 3;
+           ColSrc = 'c', ColSrc = 'C' -> ColSrc is 4;
+           ColSrc = 'd', ColSrc = 'D' -> ColSrc is 5;
+           ColSrc = 'e', ColSrc = 'E' -> ColSrc is 6;
+           ColSrc = 'f', ColSrc = 'F' -> ColSrc is 7;
+           ColSrc = 'g', ColSrc = 'G' -> ColSrc is 8;
+	   
+	   ColDest = 'a', ColDest = 'A' ->ColDest is 2;
+           ColDest = 'b', ColDest = 'B' -> ColDest is 3;
+           ColDest = 'c', ColDest = 'C' -> ColDest is 4;
+           ColDest = 'd', ColDest = 'D' -> ColDest is 5;
+           ColDest = 'e', ColDest = 'E' -> ColDest is 6;
+           ColDest = 'f', ColDest = 'F' -> ColDest is 7;
+           ColDest = 'g', ColDest = 'G' -> ColDest is 8;
 	   write('I hope you have chosen well!'), nl
         ),
         moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard),
