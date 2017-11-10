@@ -24,26 +24,6 @@ playGame(Game) :-
 	write('ACABOU TURNO BRANCO'),
 	playerTurn(GameBoardAfterWhite, GameBoardAfterBlack, blackPlayer).
 
-/*playloopHH(_, Board) :- 
-	display(Board),nl, write('White won!!'),  nl.
-
-playloopHH(Player, Board) :-
-  humanplayer(Player, Board, B1),
-  switch(Player, NewPlayer), !,
-  playloopHH(NewPlayer, B1).
-
-humanplayer(P, Board, NewBoard) :-
-  display(Board),
-  nl,nl,
-  movmessage(P, M), write(M),
-  getCoordinate(X, Y), nl,
-  move(P, Board, X, Y, NewBoard).
-
-humanplayer(P, Board, NewBoard) :-
-  write('Invalid move. Try again.'), nl,
-  humanplayer(P, Board, NewBoard).*/
-
-
 playerTurn(GameBoard, NewGameBoard, Player) :- 
                 displayGame(GameBoard),
 
@@ -60,11 +40,12 @@ playerTurn(GameBoard, NewGameBoard, Player) :-
 
                 /*validateMove() -> validate move acording to the rules.*/
 				!,
-				write('moveFromSrcToDest'),
-                moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard).
+                moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard),
+		nl,write('movi'),nl.
 
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
         clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),
+	nl,write('dei clear'),nl,
         setCell(NewGameBoard1,RowDest, ColDest, Value, NewGameBoard).
 		
 

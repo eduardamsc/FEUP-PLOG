@@ -77,7 +77,7 @@ getPositionFromUser(Row, Column) :-
 validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
 
 validRow(Y):-
-    Y > 49, Y < 60.
+    Y > 48, Y < 60.
 
 
 
@@ -90,9 +90,11 @@ replaceInList(L, _, _, L).
 
 clearCell(Board, NRow, NColumn, Value, NewBoard) :-
   nth0(NRow, Board, Row),
+  nl,write('aqui1'),nl,
   nth1(NColumn, Row, Value),
-  
+  nl,write('aqui2'),nl,
   replaceInList(Row, NColumn, empty, NewRow),
+  nl,write('aqui3'),nl,
   replaceInList(Board, NRow, NewRow, NewBoard).
 
 setCell(Board, NRow, NColumn, Value, NewBoard) :-
