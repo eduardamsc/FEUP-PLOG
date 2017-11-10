@@ -34,14 +34,11 @@ getCodeThenEnter(X) :-
 
 %readCharFromUser(-X, +Possibilities, +Message, +Error)
 readCharFromUser(X, Possibilities, Message, Error) :- 
-
         write(Message),
         getCharThenEnter(X),
-        
         member(X, Possibilities).
 
 readCharFromUser(X, Possibilities, Message, Error) :- 
-
         !,
         write(Error),
         readCharFromUser(X, Possibilities, Message, Error).
@@ -65,7 +62,6 @@ readCodeFromUser(X, Condition, Message, Error) :-
 
 
 getPositionFromUser(Row, Column) :-
-
         readCodeFromUser(Row, validRow(Row), 'Row: ', 'Invalid Row! Rows must be between 1 and 9.\n'),
         !,
         validColumns(ValidCols),
@@ -89,6 +85,7 @@ replaceInList([H|T], I, X, [H|R]):- I > -1, NI is I-1, replaceInList(T, NI, X, R
 replaceInList(L, _, _, L).
 
 clearCell(Board, NRow, NColumn, Value, NewBoard) :-
+        nl,write('ERRO'),nl,
   nth0(NRow, Board, Row),
   nl,write('aqui1'),nl,
   nth1(NColumn, Row, Value),
