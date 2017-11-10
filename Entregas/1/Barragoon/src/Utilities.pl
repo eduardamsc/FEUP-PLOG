@@ -76,6 +76,9 @@ chooseTile(Row, Column, Message) :-
 ifelse(Condition, If, _Else) :- Condition, !, If.
 ifelse(_, _, Else) :- Else.
 
+ifelse(Condition1, Condition2, If, _Else) :- Condition1, Condition2, !, If.
+ifelse(_, _, _, Else) :- Else.
+
 not(X) :- X, !, fail.
 not(_X).
 

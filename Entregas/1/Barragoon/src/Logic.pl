@@ -34,7 +34,6 @@ playerTurn(Game, NewGame) :-
            RowSrcPos is RowSrc-49
         ),
 
-        /*validateTile(Row, Column) -> make sure the position corresponds to a piece of the player*/
         validateTile(GameBoard, RowSrcPos, ColSrcPos),
         !,
         chooseTile(RowDest, ColDest, 'Where do you want to move the tile?'),
@@ -50,6 +49,7 @@ playerTurn(Game, NewGame) :-
         RowDestPos is RowDest-49,
 
         moveFromSrcToDest(GameBoard, RowSrcPos, ColSrcPos, RowDestPos, ColDestPos, NewGameBoard),
+        isShortMove(RowSrcPos, ColSrcPos, RowDestPos, ColDestPos),
         setBoard(Game, NewGameBoard, NewGame).
 
 
@@ -57,29 +57,66 @@ playerTurn(Game, NewGame) :-
 % ------------------------------ MOVEMENTS --------------------------------
 % -------------------------------------------------------------------------
 
+% --- Move piece ---
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
         clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),
         setCell(NewGameBoard1,RowDest, ColDest, Value, NewGameBoard).
+
+% --- Check if it is a short move ---
+% --- 2 tile ---
+isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
+        X is abs(RowSrc - RowDest),
+        Y is abs(ColSrc - ColDest),
+        ifelse(X==0, Y==1, write('Short move'),  
+               ifelse(X==1, Y==0, write('Short move'),  
+                      write('Check for Full Move')
+                     )
+              ).
+% --- 3 tile ---
+isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
+        X is abs(RowSrc - RowDest),
+        Y is abs(ColSrc - ColDest),
+        ifelse(X==2, Y==0, write('Short move'),  
+               ifelse(X==1, Y==1, write('Short move'),  
+                      ifelse(X==0, Y==2, write('Short move'),  
+                             write('Check for Full Move')
+                            )
+                     )
+              ).
+
+% --- 4 tile ---
+isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
+        X is abs(RowSrc - RowDest),
+        Y is abs(ColSrc - ColDest),
+        ifelse(X==0, Y==3, write('Short move'),  
+               ifelse(X==3, Y==0, write('Short move'),  
+                      ifelse(X==1, Y==2, write('Short move'),  
+                             ifelse(X==2, Y==1, write('Short move'),  
+                                    write('Check for Full Move')
+                                   )
+                            )
+                     )
+              ).
 
 % -------------------------------------------------------------------------
 % ------------------------------ VALIDATIONS ------------------------------
 % -------------------------------------------------------------------------
 
 % --- Check if it is a tile ---
-validateTile(Board, RowSrc, ColSrc) :-
-        getCell(Board, RowSrc, ColSrc, Piece),
+validateTile(Board, Row, Collumn) :-
+        getCell(Board, Row, Collumn, Piece),
         validTiles(Tiles),
         member(Piece, Tiles).
-validateTile(_Board, _RowSrc, _ColSrc) :-
+validateTile(_Board, _Row, _Collumn) :-
         write('There\'s not a movable piece in that position.'), nl,
         write('Please, try another position.'), nl,
         fail.
 
 % --- Check if it is a barragoon ---
-validateBarragoon.
 
-% --- Check if it movement is possible ---
-validateMovement.
+
+% --- Check if movement is possible ---
+
 
 % --- Valid collumns ---
 validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
@@ -89,4 +126,4 @@ validRow(Y):- Y > 48, Y < 60.
 % --- Valid pieces ---
 validTiles(['black2','black3','black4','white2','white3','white4']).
 
-validBarragoons(['barraX', 'right','left','2dir', '1dir', 'alldir']).
+validBarragoons(['barraX', 'right','left', '1dirU', '1dirD', '2dirU', '2dirD', '2dirL', '2dirR', 'alldir']).
