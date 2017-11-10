@@ -1,20 +1,25 @@
 %-------------------------------%
-%-----------Menus---------------%
+%----------Interface------------%
 %-------------------------------%
 
+% -------------------------------------------------------------------------
+% ----------------------------------- MENUS -------------------------------
+% -------------------------------------------------------------------------
+
+% -- Menus --
 mainMenu :-
         displayMainMenu,
         getCharThenEnter(Option),
         (
-                Option = '1' -> startGamePvP;
-                Option = '2';
-                Option = '3';
-                Option = '4' -> rulesMenu;
-                Option = '5';
+           Option = '1' -> startGamePvP;
+           Option = '2';
+           Option = '3';
+           Option = '4' -> displayRules;
+           Option = '5';
 
-                clearScreen,
-                write('ERROR : invalid input...'), spacing(1),
-		mainMenu
+           clearScreen,
+           write('ERROR : invalid input...'), spacing(1),
+	   mainMenu
         ).
 
 displayMainMenu :- 
@@ -32,11 +37,11 @@ displayMainMenu :-
         write('|                5 - Quit                                   |'),nl,
         lowerFrame.
 
-rulesMenu :- 
+displayRules :- 
         upperFrame,
         titleFrame,
         write('|                ***************************                |'),nl,
-        write('|                *        Rules Menu       *                |'),nl,
+        write('|                *        Game Rules       *                |'),nl,
         write('|                ***************************                |'),nl,
         write('|  1. A piece is captured if the oponent\'s piece finishes   |'),nl,
         write('|     in the same cell.                                     |'),nl,
@@ -50,7 +55,7 @@ rulesMenu :-
         write('|     the board, 1 per player and the first to place it is  |'),nl,
         write('|     the one whose tile was captured.                      |'),nl,
         write('|  6. Once a barragoon is placed, it can\'t be moved.        |'),nl, 
-        write('|  7. During a move, there can only be one 90� change of    |'),nl, 
+        write('|  7. During a move, there can only be one change of    |'),nl, 
         write('|     direction.                                            |'),nl,
         write('|  8. Movements can only be vertical or horizontal, never   |'),nl, 
         write('|     diagonal.                                             |'),nl,
@@ -58,10 +63,21 @@ rulesMenu :-
         spacing(2),
         next, mainMenu, !.
 
-upperFrame :- 
-        write(' ___________________________________________________________'),nl,
-        write('|                                                           |'),nl.
+displayPlayerTurn(Player) :-
+        ifelse(
+                 Player = whitePlayer ,
+                 (
+                    write('***************************'),nl,
+                    write('*       White Player      *'),nl,
+                    write('***************************'),nl
+                 ),
+                 (
+                    write('***************************'),nl,
+                    write('*       Black Player      *'),nl,
+                    write('***************************'),nl
+                 )).
 
+% -- Logo --
 titleFrame :-
         write('|   ____                                                    |'), nl,                                               
         write('|  |  _ \\                                                   |'), nl,
@@ -73,64 +89,45 @@ titleFrame :-
         write('|                              |___/                        |'), nl,
         write('|                                                           |'),nl.
 
+% -- Frames --
+upperFrame :- 
+        write(' ___________________________________________________________'),nl,
+        write('|                                                           |'),nl.
+
 lowerFrame :-
         write('|                                                           |'),nl,
         write('|___________________________________________________________|'),nl.
 
-        
-displayPlayerTurn(Player) :-
+% -------------------------------------------------------------------------
+% ----------------------------------- BOARD -------------------------------
+% -------------------------------------------------------------------------
 
-        ifelse( Player = whitePlayer ,
-                (
-                        write('***************************'),nl,
-                        write('*       White Player      *'),nl,
-                        write('***************************'),nl
-                ),
-                (
-                        write('***************************'),nl,
-                        write('*       Black Player      *'),nl,
-                        write('***************************'),nl
-
-                )).
-
-
-         
-chooseTile(Row, Column, Message) :-
-        write(Message), nl,
-        getPositionFromUser(Row, Column).
-
-        
+% -- BOARD --
 initialBoard(   [[empty, black4, black3, empty, black3, black4, empty],
-                [empty, empty, black2, black3, black2, empty, empty],
-                [empty, empty, empty, empty, empty, empty, empty],
-                [empty, barraX, empty, empty, empty, barraX, empty],
-                [barraX, empty, barraX, empty, barraX, empty, barraX],
-                [empty, barraX, empty, empty, empty, barraX, empty],
-                [empty, empty, empty, empty, empty, empty, empty],
-                [empty, empty, white2, white3, white2, empty, empty],
-                [empty, white4, white3, empty, white3, white4, empty]]).
-
-
+                 [empty, empty, black2, black3, black2, empty, empty],
+                 [empty, empty, empty, empty, empty, empty, empty],
+                 [empty, barraX, empty, empty, empty, barraX, empty],
+                 [barraX, empty, barraX, empty, barraX, empty, barraX],
+                 [empty, barraX, empty, empty, empty, barraX, empty],
+                 [empty, empty, empty, empty, empty, empty, empty],
+                 [empty, empty, white2, white3, white2, empty, empty],
+                 [empty, white4, white3, empty, white3, white4, empty]]).
 
 displayGame(Board) :- 
         clearScreen,
-        topAxis,nl,
+        lettersAxis,nl,
         horizontalBorder, nl,
-
-        rowNumbers(RowNumbers),
-
+        numbersAxis(RowNumbers),
         displayBoard(Board, RowNumbers).
-
-rowNumbers([um, dois, tres,quatro, cinco, seis, sete, oito, nove]).
 
 displayBoard([], []).
 displayBoard([RowToDisplay|RemainingBoard], [RowToDisplayNumber|RemainingRowNumbers]) :-
-
         translate([RowToDisplayNumber]),
         translate(RowToDisplay),border, nl,
         horizontalBorder, nl,
         displayBoard(RemainingBoard, RemainingRowNumbers).
 
+% -- Board Translation --
 translate([]).
 translate(['empty'|R]) :- border, write('    '), !, translate(R).
 translate(['white2'|R]) :- border, write(' w2 '), !, translate(R).
@@ -153,9 +150,12 @@ translate(['sete'|R]) :- write('7'), !, translate(R).
 translate(['oito'|R]) :- write('8'), !, translate(R).
 translate(['nove'|R]) :- write('9'), !, translate(R).
 
-topAxis :- 
-        write('    A    B    C    D    E    F    G').
-horizontalBorder :- 
-        write('  ----------------------------------').
-border :- 
-        write('|').
+% -- Board Axis --
+numbersAxis([um, dois, tres,quatro, cinco, seis, sete, oito, nove]).
+
+lettersAxis :- write('    A    B    C    D    E    F    G').
+
+% -- Board Borders --
+horizontalBorder :- write('  ----------------------------------').
+
+border :- write('|').

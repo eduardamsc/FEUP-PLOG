@@ -1,5 +1,5 @@
 :- include('Utilities.pl').
-:- include('Menus.pl').
+:- include('Interface.pl').
 :- include('Logic.pl').
 :- use_module(library(system)).
 
@@ -15,5 +15,3 @@
 startGame :-
         clearScreen,
         mainMenu.
-
-% --- OTHERS ---
