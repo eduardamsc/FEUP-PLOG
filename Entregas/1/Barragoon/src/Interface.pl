@@ -137,7 +137,13 @@ translate(['black2'|R]) :- border, write(' b2 '), !, translate(R).
 translate(['black3'|R]) :- border, write(' b3 '), !, translate(R).
 translate(['black4'|R]) :- border, write(' b4 '), !, translate(R).
 translate(['barraX'|R]) :- border, write('  X '), !, translate(R).
-translate(['allDir'|R]) :- border, write('  * '), !, translate(R).
+translate(['allDir'|R]) :- border, write('  + '), !, translate(R).
+translate(['1DirU'|R]) :- border, write('  V '), !, translate(R).
+translate(['1DirD'|R]) :- border, write('  A '), !, translate(R).
+translate(['1DirL'|R]) :- border, write(' <= '), !, translate(R).
+translate(['1DirR'|R]) :- border, write(' => '), !, translate(R).
+translate(['2DirH'|R]) :- border, write('  X '), !, translate(R).
+translate(['2DirV'|R]) :- border, write('  X '), !, translate(R).
 translate(['right'|R]) :- border, write('  > '), !, translate(R).
 translate(['left'|R]) :- border, write(' <  '), !, translate(R).
 translate(['um'|R]) :- write('1'), !, translate(R).

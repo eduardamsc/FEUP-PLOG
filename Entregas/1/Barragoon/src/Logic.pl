@@ -16,32 +16,23 @@ initializeGamePvP(Game):-
         Game = [Board, whitePlayer, pvp], !.
 
 playGame(Game) :-
-
         playerTurn(Game, UpdatedGame),
-
         switchPlayer(UpdatedGame, NextPlayerGame),
         playGame(NextPlayerGame).
 
 playerTurn(Game, NewGame) :- 
-
         getBoard(Game, GameBoard),
         getCurrentPlayer(Game, Player),
-
         displayGame(GameBoard),
-
         displayPlayerTurn(Player),
-
         repeat,
         (
            chooseTile(RowSrc, ColSrc, 'Which tile would you like to move?'),
-
            validColumns(Possibilities),
-
            nth0(ColSrcPosInPossibilities, Possibilities, ColSrc),
            ColSrcPos is ColSrcPosInPossibilities mod 7,
            RowSrcPos is RowSrc-49
         ),
-
 
         /*validateTile(Row, Column) -> make sure the position corresponds to a piece of the player*/
         validateTile(GameBoard, RowSrcPos, ColSrcPos),
@@ -59,7 +50,6 @@ playerTurn(Game, NewGame) :-
         RowDestPos is RowDest-49,
 
         moveFromSrcToDest(GameBoard, RowSrcPos, ColSrcPos, RowDestPos, ColDestPos, NewGameBoard),
-
         setBoard(Game, NewGameBoard, NewGame).
 
 
@@ -99,4 +89,4 @@ validRow(Y):- Y > 48, Y < 60.
 % --- Valid pieces ---
 validTiles(['black2','black3','black4','white2','white3','white4']).
 
-validBarragoons(['alldir','right','left','barraX']).
+validBarragoons(['barraX', 'right','left','2dir', '1dir', 'alldir']).
