@@ -82,7 +82,8 @@ validateTile(Board, RowSrc, ColSrc) :-
         member(Piece, Tiles).
 validateTile(_Board, _RowSrc, _ColSrc) :-
         write('There\'s not a movable piece in that position.'), nl,
-        write('Please, try another position.').
+        write('Please, try another position.'), nl,
+        fail.
 
 % --- Check if it is a barragoon ---
 validateBarragoon.
