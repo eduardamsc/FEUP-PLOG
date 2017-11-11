@@ -19,7 +19,7 @@ mainMenu :-
 
            clearScreen,
            write('ERROR : invalid input...'), spacing(1),
-	   mainMenu
+           mainMenu
         ).
 
 displayMainMenu :- 
@@ -160,11 +160,8 @@ translate(['sete'|R]) :- write('7'), !, translate(R).
 translate(['oito'|R]) :- write('8'), !, translate(R).
 translate(['nove'|R]) :- write('9'), !, translate(R).
 
-
-
-
 % -- Board Axis --
-numbersAxis([um, dois, tres, quatro, cinco, seis, sete, oito, nove]).
+numbersAxis([um, dois, tres,quatro, cinco, seis, sete, oito, nove]).
 
 lettersAxis :- write('    A    B    C    D    E    F    G').
 

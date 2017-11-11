@@ -32,7 +32,7 @@ playerTurn(Game, NewGame) :-
 
         repeat,
         (
-            choosePath(Path, 'Insert the path that you want that piece to follow:\n(Use keys WASD - eg. wwwd + Enter).')
+            choosePath(Path, 'Please insert the path that you want that piece to follow:\n(Use WASD - eg. wwwd + Enter).')
         ),
 
         validatePath(RowSrc, ColSrc, Path),
@@ -49,7 +49,6 @@ playerTurn(Game, NewGame) :-
 % -------------------------------------------------------------------------
 % ------------------------------ MOVEMENTS --------------------------------
 % -------------------------------------------------------------------------
-
 
 getDestCellFromPath(RowSrc, ColSrc, [], RowDest, ColDest):-
         RowDest = RowSrc,
@@ -107,6 +106,11 @@ validateTile(_Game, _RowSrc, _ColSrc) :-
         %go_back to repeat cycle
 
 % --- Check if it is a valid path ---
+validatePathValues([]).
+validatePathValues([H|T]) :- 
+        member(H,['w','a','s','d']), 
+        validatePathValues(T).
+
 %validatePath(+Game, +RowSrcPos, +ColSrcPos, +Path): make sure the path is a valid one
 validatePath(RowSrc, ColSrc, Path) :-
 
@@ -119,15 +123,10 @@ validatePath(RowSrc, ColSrc, Path) :-
         verifyTurnsOnce(Path).
 
 validatePath(_, _, _) :-
-        write('That path in not a valid one.'), nl,
+        write('That path is not valid!'), nl,
         write('Please, try another path.'), nl,
         fail. 
         %go_back to repeat cycle
-
-validatePathValues([]).
-validatePathValues([H|T]) :- 
-        member(H,validDirections), 
-        validatePathValues(T).
 
 % --- Check if it turns just once ---
 verifyTurnsOnce([H|T]) :-
@@ -152,12 +151,10 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
 % --- Check if movement is possible ---
 
 
-% --- Valid Coordinates ---
+% --- Valid coordinates ---
 validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
 
 validRow(Y):- Y > 48, Y < 60.
-
-validDirections(['w','a','s','d']).
 
 complementary('w','s').
 complementary('s','w').

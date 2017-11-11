@@ -76,8 +76,8 @@ chooseTile(Row, Column, Message) :-
 choosePath(Path, Message) :- 
         write(Message), nl,
         readCharUntilEnter(Path),
-        
-        validatePathValues(Path). 
+
+        validatePathValues(Path).
 
 % --- Get path ---
 readCharUntilEnter(List) :- 
@@ -89,7 +89,8 @@ readCharUntilEnter(List) :-
 readCharUntilEnterAux([],'\n').
 readCharUntilEnterAux([Char|Tail], Char) :-
         get_char(NewChar),
-        readCharUntilEnterAux(Tail,NewChar).       
+        readCharUntilEnterAux(Tail,NewChar).
+        
 
 % -------------------------------------------------------------------------
 % ----------------------------- CONDITIONS --------------------------------
