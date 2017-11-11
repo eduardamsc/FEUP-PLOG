@@ -100,9 +100,6 @@ readCharUntilEnterAux([Char|Tail], Char) :-
 ifelse(Condition, If, _Else) :- Condition, !, If.
 ifelse(_, _, Else) :- Else.
 
-ifelse(Condition1, Condition2, If, _Else) :- Condition1, Condition2, !, If.
-ifelse(_, _, _, Else) :- Else.
-
 not(X) :- X, !, fail.
 not(_X).
 
@@ -148,7 +145,6 @@ clearCell(Board, NRow, NColumn, Value, NewBoard) :-
 % --- Change cell value ---
 setCell(Board, NRow, NColumn, Value, NewBoard) :-
         nth0(NRow, Board, Row),
-        /*Set cell with Value*/
         replaceInList(Row, NColumn, Value, NewRow),
         replaceInList(Board, NRow, NewRow, NewBoard).
 

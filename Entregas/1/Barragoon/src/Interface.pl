@@ -142,12 +142,12 @@ translate([b-3|R]) :- border, write(' b3 '), !, translate(R).
 translate([b-4|R]) :- border, write(' b4 '), !, translate(R).
 translate([bg-'barraX'|R]) :- border, write('  X '), !, translate(R).
 translate([bg-'allDir'|R]) :- border, write('  + '), !, translate(R).
-translate([bg-'1DirU'|R]) :- border, write('  V '), !, translate(R).
-translate([bg-'1DirD'|R]) :- border, write('  A '), !, translate(R).
+translate([bg-'1DirU'|R]) :- border, write('  A '), !, translate(R).
+translate([bg-'1DirD'|R]) :- border, write('  V '), !, translate(R).
 translate([bg-'1DirL'|R]) :- border, write(' <= '), !, translate(R).
 translate([bg-'1DirR'|R]) :- border, write(' => '), !, translate(R).
-translate([bg-'2DirH'|R]) :- border, write('  X '), !, translate(R).
-translate([bg-'2DirV'|R]) :- border, write('  X '), !, translate(R).
+translate([bg-'2DirH'|R]) :- border, write('  - '), !, translate(R).
+translate([bg-'2DirV'|R]) :- border, write('  I '), !, translate(R).
 translate([bg-'right'|R]) :- border, write('  > '), !, translate(R).
 translate([bg-'left'|R]) :- border, write(' <  '), !, translate(R).
 translate(['um'|R]) :- write('1'), !, translate(R).
