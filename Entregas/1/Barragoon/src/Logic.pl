@@ -66,7 +66,6 @@ movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
         isBarragoon(GameBoard, RowDest, ColDest, PlaceBarragoon),
         (
-           write(PlaceBarragoon),nl,
            PlaceBarragoon = 0 -> write('A barragoon was eaten in this move!'),nl, insertBarragoon(GameBoard, NewBoard), moveFromSrcToDest(NewBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard);
            PlaceBarragoon = 1 -> write('No barragoons were eaten in this move!'), moveFromSrcToDest(GameBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard)
         
@@ -115,8 +114,7 @@ validateTile(_Game, _RowSrc, _ColSrc) :-
 isBarragoon(Board, Row, Collumn, PlaceBarragoon) :-
         getCell(Board, Row, Collumn, Piece),
         validBarragoons(Barragoons),
-        ifelse(member(Piece,Barragoons), PlaceBarragoon is 0, PlaceBarragoon is 1),
-        write(PlaceBarragoon),nl.
+        ifelse(member(Piece,Barragoons), PlaceBarragoon is 0, PlaceBarragoon is 1).
 
 % -------------------------------------------------------------------------
 % ---------------------------- MOVEMENT RULES -----------------------------
@@ -166,9 +164,7 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
 
 % --- Insert new barragoon ---
 insertBarragoon(Board, NewBoard) :-
-        write('Where do you wish to place your barragoon?'), nl,
-        %getPositionFromUser(Row, Collumn),
-        Row is 1, Collumn is 1,
+        chooseTile(Row, Collumn, 'Where do you wish to place your barragoon?'),
         write('Which barragoon do you wish to insert?'),nl,
         write('The options are:'),nl,
         write('1-  X\n2-  +\n3-  A\n4-  V\n5- <=\n6- =>\n7-  -\n8-  I\n9-  <\n10- >'),nl,
