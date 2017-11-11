@@ -65,7 +65,7 @@ displayRules :-
 
 displayPlayerTurn(Player) :-
         ifelse(
-                 Player = whitePlayer ,
+                 Player = w ,
                  (
                     write('***************************'),nl,
                     write('*       White Player      *'),nl,
@@ -103,15 +103,15 @@ lowerFrame :-
 % -------------------------------------------------------------------------
 
 % -- BOARD --
-initialBoard(   [[empty, black4, black3, empty, black3, black4, empty],
-                 [empty, empty, black2, black3, black2, empty, empty],
+initialBoard(   [[empty, b-4, b-3, empty, b-3, b-4, empty],
+                 [empty, empty, b-2, b-3, b-2, empty, empty],
                  [empty, empty, empty, empty, empty, empty, empty],
-                 [empty, barraX, empty, empty, empty, barraX, empty],
-                 [barraX, empty, barraX, empty, barraX, empty, barraX],
-                 [empty, barraX, empty, empty, empty, barraX, empty],
+                 [empty, bg-x, empty, empty, empty, bg-x, empty],
+                 [bg-x, empty, bg-x, empty, bg-x, empty, bg-x],
+                 [empty, bg-x, empty, empty, empty, bg-x, empty],
                  [empty, empty, empty, empty, empty, empty, empty],
-                 [empty, empty, white2, white3, white2, empty, empty],
-                 [empty, white4, white3, empty, white3, white4, empty]]).
+                 [empty, empty, w-2, w-3, w-2, empty, empty],
+                 [empty, w-4, w-3, empty, w-3, w-4, empty]]).
 
 displayGame(Board) :- 
         clearScreen,
@@ -130,16 +130,20 @@ displayBoard([RowToDisplay|RemainingBoard], [RowToDisplayNumber|RemainingRowNumb
 % -- Board Translation --
 translate([]).
 translate(['empty'|R]) :- border, write('    '), !, translate(R).
-translate(['white2'|R]) :- border, write(' w2 '), !, translate(R).
-translate(['white3'|R]) :- border, write(' w3 '), !, translate(R).
-translate(['white4'|R]) :- border, write(' w4 '), !, translate(R).
-translate(['black2'|R]) :- border, write(' b2 '), !, translate(R).
-translate(['black3'|R]) :- border, write(' b3 '), !, translate(R).
-translate(['black4'|R]) :- border, write(' b4 '), !, translate(R).
-translate(['barraX'|R]) :- border, write('  X '), !, translate(R).
-translate(['allDir'|R]) :- border, write('  * '), !, translate(R).
-translate(['right'|R]) :- border, write('  > '), !, translate(R).
-translate(['left'|R]) :- border, write(' <  '), !, translate(R).
+translate([w-2|R]) :- border, write(' w2 '), !, translate(R).
+translate([w-3|R]) :- border, write(' w3 '), !, translate(R).
+translate([w-4|R]) :- border, write(' w4 '), !, translate(R).
+translate([b-2|R]) :- border, write(' b2 '), !, translate(R).
+translate([b-3|R]) :- border, write(' b3 '), !, translate(R).
+translate([b-4|R]) :- border, write(' b4 '), !, translate(R).
+translate([bg-x|R]) :- border, write('  X '), !, translate(R).
+translate([bg-allDir|R]) :- border, write('  * '), !, translate(R).
+translate([bg-turnRight|R]) :- border, write(' .> '), !, translate(R).
+translate([bg-turnLeft|R]) :- border, write(' <. '), !, translate(R).
+translate([bg-right|R]) :- border, write('  > '), !, translate(R).
+translate([bg-left|R]) :- border, write(' <  '), !, translate(R).
+translate([bg-up|R]) :- border, write(' /\\ '), !, translate(R).
+translate([bg-down|R]) :- border, write(' \\/ '), !, translate(R).
 translate(['um'|R]) :- write('1'), !, translate(R).
 translate(['dois'|R]) :- write('2'), !, translate(R).
 translate(['tres'|R]) :- write('3'), !, translate(R).
@@ -149,6 +153,9 @@ translate(['seis'|R]) :- write('6'), !, translate(R).
 translate(['sete'|R]) :- write('7'), !, translate(R).
 translate(['oito'|R]) :- write('8'), !, translate(R).
 translate(['nove'|R]) :- write('9'), !, translate(R).
+
+
+
 
 % -- Board Axis --
 numbersAxis([um, dois, tres,quatro, cinco, seis, sete, oito, nove]).

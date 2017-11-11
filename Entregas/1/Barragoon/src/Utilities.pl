@@ -66,7 +66,36 @@ getPositionFromUser(Row, Column) :-
 
 chooseTile(Row, Column, Message) :-
         write(Message), nl,
-        getPositionFromUser(Row, Column).
+        getPositionFromUser(RowCode, ColumnChar),
+        validColumns(Possibilities),
+
+        nth0(ColPosInPossibilities, Possibilities, ColumnChar),
+        Column is ColPosInPossibilities mod 7,
+        Row is RowCode-49.
+
+choosePath(Path, Message) :- 
+        write(Message), nl,
+        readCharUntilEnter(Path),
+
+        validatePathValues(Path),
+        write(Path).
+
+
+validatePathValues([]).
+validatePathValues([H|T]) :- 
+        member(H,['w','a','s','d']), 
+        validatePathValues(T).
+
+readCharUntilEnter(List) :- 
+        get_char(Char),
+        readCharAux([Char|Tail],Char),
+        List = [Char|Tail].
+
+readCharUntilEnterAux([],'\n').
+readCharUntilEnterAux([Char|Tail], Char) :-
+        get_char(NewChar),
+        readCharAuxUntilEnter(Tail,NewChar).
+        
 
 % -------------------------------------------------------------------------
 % ----------------------------- CONDITIONS --------------------------------
@@ -134,7 +163,12 @@ switchPlayer(Game, NextPlayerGame):-
         getBoard(Game, Board),
         getCurrentPlayer(Game, CurrentPlayer),
         getGameMode(Game, Mode),
-        ifelse( CurrentPlayer == whitePlayer ,
-                NextPlayer = blackPlayer,
-                NextPlayer = whitePlayer),
+        ifelse( CurrentPlayer == w ,
+                NextPlayer = b,
+                NextPlayer = w),
         NextPlayerGame = [Board, NextPlayer, Mode].
+
+complementary('w','s').
+complementary('s','w').
+complementary('a','d').
+complementary('d','a').
