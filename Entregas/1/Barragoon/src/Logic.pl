@@ -178,9 +178,6 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
         N1 is N+1,      
         verifyTurnsOnceAux(T, H, N1, C1).
         
-
-
-
 % --- Check if it is a barragoon ---
 
 
