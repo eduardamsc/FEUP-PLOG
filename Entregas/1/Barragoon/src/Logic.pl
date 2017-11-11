@@ -41,7 +41,8 @@ playerTurn(Game, NewGame) :-
         /*validateMove() -> validate move acording to the rules.*/
 
         getBoard(Game, GameBoard),
-        movePiece(Game,GameBoard, RowSrc, ColSrc, Path, NewGameBoard),
+        movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard),
+         %setCell(NewGameBoard,1, 1, bg-allDir, NewGameBoard2),
 
         setBoard(Game, NewGameBoard, NewGame).
 
@@ -62,10 +63,10 @@ getDestCellFromPath(RowSrc, ColSrc, [Move|Tail], RowDest, ColDest) :-
         ).
 
 % --- Move piece ---
-movePiece(Game,GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
+movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
-        isBarragoon(Game, RowDest, ColDest, GameBoard),
-        moveFromSrcToDest(GameBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard).
+        isBarragoon(GameBoard, RowDest, ColDest, GameBoardAux),
+        moveFromSrcToDest(GameBoardAux,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard).
 
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
         clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),
@@ -107,8 +108,7 @@ validateTile(_Game, _RowSrc, _ColSrc) :-
 %go_back to repeat cycle
 
 % --- Check if it is a barragoon ---
-isBarragoon(Game, Row, Collumn, NewBoard) :-
-        getBoard(Game, Board),
+isBarragoon(Board, Row, Collumn, NewBoard) :-
         getCell(Board, Row, Collumn, Piece),
         validBarragoons(Barragoons),
         ifelse(member(Piece,Barragoons), Option is 0, Option is 1),
@@ -116,8 +116,7 @@ isBarragoon(Game, Row, Collumn, NewBoard) :-
            Option = 0 -> write('A barragoon was eaten in this move!'),nl, insertBarragoon(Board, NewBoard);
            Option = 1 -> write('No barragoons were eaten in this move!')
         
-        ),
-        write('4').
+        ).
 
 % -------------------------------------------------------------------------
 % ---------------------------- MOVEMENT RULES -----------------------------
@@ -175,16 +174,16 @@ insertBarragoon(Board, NewBoard) :-
         write('1-  X\n2-  +\n3-  A\n4-  V\n5- <=\n6- =>\n7-  -\n8-  I\n9-  <\n10- >'),nl,
         getCharThenEnter(Option),
         (
-           Option = '1' -> setCell(Board, Row, Collumn, '  X ', NewBoard);
-           Option = '2' -> setCell(Board, Row, Collumn, '  + ', NewBoard);
-           Option = '3' -> setCell(Board, Row, Collumn, '  A ', NewBoard);
-           Option = '4' -> setCell(Board, Row, Collumn, '  V ', NewBoard);
-           Option = '5' -> setCell(Board, Row, Collumn, ' <= ', NewBoard);
-           Option = '6' -> setCell(Board, Row, Collumn, ' => ', NewBoard);
-           Option = '7' -> setCell(Board, Row, Collumn, '  - ', NewBoard);
-           Option = '8' -> setCell(Board, Row, Collumn, '  I ', NewBoard);
-           Option = '9' -> setCell(Board, Row, Collumn, '  <  ', NewBoard);
-           Option = '10' -> setCell(Board, Row, Collumn, '  >  ', NewBoard)
+           Option = '1' -> setCell(Board, Row, Collumn, bg-barraX, NewBoard);
+           Option = '2' -> setCell(Board, Row, Collumn, bg-allDir, NewBoard);
+           Option = '3' -> setCell(Board, Row, Collumn, bg-oDirU, NewBoard);
+           Option = '4' -> setCell(Board, Row, Collumn, bg-oDirD, NewBoard);
+           Option = '5' -> setCell(Board, Row, Collumn, bg-oDirL, NewBoard);
+           Option = '6' -> setCell(Board, Row, Collumn, bg-oDirR, NewBoard);
+           Option = '7' -> setCell(Board, Row, Collumn, bg-tDirH, NewBoard);
+           Option = '8' -> setCell(Board, Row, Collumn, bg-tDirV, NewBoard);
+           Option = '9' -> setCell(Board, Row, Collumn, bg-left, NewBoard);
+           Option = '10' -> setCell(Board, Row, Collumn, bg-right, NewBoard)
           ).
 
 
@@ -193,7 +192,7 @@ validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
 
 validRow(Y):- Y > 48, Y < 60.
 
-validBarragoons([bg-'barraX', bg-'allDir', bg-'1DirU', bg-'1DirD', bg-'1DirL', bg-'1DirR', bg-'2DirH', bg-'2DirV', bg-'right', bg-'left']).
+validBarragoons([bg-barraX, bg-allDir, bg-oDirU, bg-oDirD, bg-oDirL, bg-oDirR, bg-oDirH, bg-oDirV, bg-left, bg-right]).
 
 complementary('w','s').
 complementary('s','w').
