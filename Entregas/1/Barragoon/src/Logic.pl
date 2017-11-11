@@ -16,38 +16,31 @@ initializeGamePvP(Game):-
         Game = [Board, w, pvp], !.
 
 playGame(Game) :-
-
         playerTurn(Game, UpdatedGame),
-
         switchPlayer(UpdatedGame, NextPlayerGame),
         playGame(NextPlayerGame).
 
 playerTurn(Game, NewGame) :- 
-
-        getBoard(Game, GameBoard),
-        getCurrentPlayer(Game, Player),
-
-        displayGame(GameBoard),
-
-        displayPlayerTurn(Player),
-
+        displayGame(Game),
         repeat,
         (
-           chooseTile(RowSrc, ColSrc, 'Which tile would you like to move?')
+            chooseTile(RowSrc, ColSrc, 'Which tile would you like to move?')
         ),
 
         validateTile(Game, RowSrc, ColSrc),
         !,
-        /*chooseTile(RowDest, ColDest, 'Where do you want to move the tile?'),*/
 
-        choosePath(Path, 'Please instert the path that you want to move that piece (Use WASD - eg. wwwd + Enter).'),       
+        repeat,
+        (
+            choosePath(Path, 'Please instert the path that you want to move that piece (Use WASD - eg. wwwd + Enter).')
+        ),
 
-        /*validatePath -> Verify tileType*/
-
-        /*validateMove() -> validate move acording to the rules.*/
+        validatePath(RowSrc, ColSrc, Path),
         !,
 
-        
+        /*validateMove() -> validate move acording to the rules.*/
+
+        getBoard(Game, GameBoard),
         movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard),
 
         setBoard(Game, NewGameBoard, NewGame).
@@ -69,6 +62,7 @@ getDestCellFromPath(RowSrc, ColSrc, [Move|Tail], RowDest, ColDest) :-
                 Move == 'd' -> (ColDest1 is ColSrc+1, getDestCellFromPath(RowSrc,ColDest1,Tail,RowDest,ColDest))
         ).
 
+% --- Move piece ---
 movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
         moveFromSrcToDest(GameBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard).
@@ -76,6 +70,55 @@ movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
         clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),
         setCell(NewGameBoard1,RowDest, ColDest, Value, NewGameBoard).
+
+% --- Check if it is a short move ---
+%isShortMove(+Piece, +Path)
+isShortMove(_Player-NDots, Path) :-
+        length(Path, N),
+
+        N1 is N-1,
+        N1 == NDots.
+        
+% --- Check if it is a long move ---
+%isLongMove(+Piece, +Path)
+isLongMove(_Player-NDots, Path) :-
+        length(Path, N),
+        N == NDots.
+        
+/*% --- 2 tile ---
+isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
+        X is abs(RowSrc - RowDest),
+        Y is abs(ColSrc - ColDest),
+        ifelse(X==0, Y==1, write('Short move'),  
+               ifelse(X==1, Y==0, write('Short move'),  
+                      write('Check for Full Move')
+                     )
+              ).
+% --- 3 tile ---
+isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
+        X is abs(RowSrc - RowDest),
+        Y is abs(ColSrc - ColDest),
+        ifelse(X==2, Y==0, write('Short move'),  
+               ifelse(X==1, Y==1, write('Short move'),  
+                      ifelse(X==0, Y==2, write('Short move'),  
+                             write('Check for Full Move')
+                            )
+                     )
+              ).
+
+% --- 4 tile ---
+isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
+        X is abs(RowSrc - RowDest),
+        Y is abs(ColSrc - ColDest),
+        ifelse(X==0, Y==3, write('Short move'),  
+               ifelse(X==3, Y==0, write('Short move'),  
+                      ifelse(X==1, Y==2, write('Short move'),  
+                             ifelse(X==2, Y==1, write('Short move'),  
+                                    write('Check for Full Move')
+                                   )
+                            )
+                     )
+              ).*/
 
 % -------------------------------------------------------------------------
 % ------------------------------ VALIDATIONS ------------------------------
@@ -99,11 +142,8 @@ validateTile(_Game, _RowSrc, _ColSrc) :-
         %go_back to repeat cycle
 
 % --- Check if it is a valid path ---
-%validatePath(+Game, +RowSrcPos, +ColSrcPos, +Path): make sure the position corresponds to a piece of the player
-validatePath(Game, RowSrc, ColSrc, Path) :-
-
-        getBoard(Game, Board),
-        getCurrentPlayer(Game, CurrentPlayer),
+%validatePath(+Game, +RowSrcPos, +ColSrcPos, +Path): make sure the path is a valid one
+validatePath(RowSrc, ColSrc, Path) :-
 
         %verify if it ends inside the board
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
@@ -113,13 +153,9 @@ validatePath(Game, RowSrc, ColSrc, Path) :-
         %verify if it turns just once
         verifyTurnsOnce(Path).
 
-        
-
-        
-
-validatePath(_Game, _RowSrc, _ColSrc) :-
-        write('There\'s not a movable piece in that position.'), nl,
-        write('Please, try another position.'), nl,
+validatePath(_, _, _) :-
+        write('That path in not a valid one.'), nl,
+        write('Please, try another path.'), nl,
         fail. 
         %go_back to repeat cycle
 
@@ -146,10 +182,10 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
 
 
 % --- Check if it is a barragoon ---
-validateBarragoon.
 
-% --- Check if it movement is possible ---
-validateMovement.
+
+% --- Check if movement is possible ---
+
 
 % --- Valid collumns ---
 validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
@@ -160,4 +196,4 @@ validRow(Y):- Y > 48, Y < 60.
 /*INUTIL*/
 validTiles(['black2','black3','black4','white2','white3','white4']).
 
-validBarragoons(['alldir','right','left','barraX']).
+validBarragoons(['barraX', 'right','left', '1dirU', '1dirD', '2dirU', '2dirD', '2dirL', '2dirR', 'alldir']).

@@ -67,14 +67,14 @@ displayPlayerTurn(Player) :-
         ifelse(
                  Player = w ,
                  (
-                    write('***************************'),nl,
-                    write('*       White Player      *'),nl,
-                    write('***************************'),nl
+                    write('*************************************'),nl,
+                    write('*            White Player           *'),nl,
+                    write('*************************************'),nl,nl
                  ),
                  (
-                    write('***************************'),nl,
-                    write('*       Black Player      *'),nl,
-                    write('***************************'),nl
+                    write('*************************************'),nl,
+                    write('*            Black Player           *'),nl,
+                    write('*************************************'),nl,nl
                  )).
 
 % -- Logo --
@@ -106,19 +106,23 @@ lowerFrame :-
 initialBoard(   [[empty, b-4, b-3, empty, b-3, b-4, empty],
                  [empty, empty, b-2, b-3, b-2, empty, empty],
                  [empty, empty, empty, empty, empty, empty, empty],
-                 [empty, bg-x, empty, empty, empty, bg-x, empty],
-                 [bg-x, empty, bg-x, empty, bg-x, empty, bg-x],
-                 [empty, bg-x, empty, empty, empty, bg-x, empty],
+                 [empty, bg-'barraX', empty, empty, empty, bg-'barraX', empty],
+                 [bg-'barraX', empty, bg-'barraX', empty, bg-'barraX', empty, bg-'barraX'],
+                 [empty, bg-'barraX', empty, empty, empty, bg-'barraX', empty],
                  [empty, empty, empty, empty, empty, empty, empty],
                  [empty, empty, w-2, w-3, w-2, empty, empty],
                  [empty, w-4, w-3, empty, w-3, w-4, empty]]).
 
-displayGame(Board) :- 
+displayGame(Game) :-
+        getBoard(Game, Board),
+        getCurrentPlayer(Game, Player),
+
         clearScreen,
+        displayPlayerTurn(Player),
         lettersAxis,nl,
         horizontalBorder, nl,
         numbersAxis(RowNumbers),
-        displayBoard(Board, RowNumbers).
+        displayBoard(Board, RowNumbers), nl.
 
 displayBoard([], []).
 displayBoard([RowToDisplay|RemainingBoard], [RowToDisplayNumber|RemainingRowNumbers]) :-
@@ -136,14 +140,16 @@ translate([w-4|R]) :- border, write(' w4 '), !, translate(R).
 translate([b-2|R]) :- border, write(' b2 '), !, translate(R).
 translate([b-3|R]) :- border, write(' b3 '), !, translate(R).
 translate([b-4|R]) :- border, write(' b4 '), !, translate(R).
-translate([bg-x|R]) :- border, write('  X '), !, translate(R).
-translate([bg-allDir|R]) :- border, write('  * '), !, translate(R).
-translate([bg-turnRight|R]) :- border, write(' .> '), !, translate(R).
-translate([bg-turnLeft|R]) :- border, write(' <. '), !, translate(R).
-translate([bg-right|R]) :- border, write('  > '), !, translate(R).
-translate([bg-left|R]) :- border, write(' <  '), !, translate(R).
-translate([bg-up|R]) :- border, write(' /\\ '), !, translate(R).
-translate([bg-down|R]) :- border, write(' \\/ '), !, translate(R).
+translate([bg-'barraX'|R]) :- border, write('  X '), !, translate(R).
+translate([bg-'allDir'|R]) :- border, write('  + '), !, translate(R).
+translate([bg-'1DirU'|R]) :- border, write('  V '), !, translate(R).
+translate([bg-'1DirD'|R]) :- border, write('  A '), !, translate(R).
+translate([bg-'1DirL'|R]) :- border, write(' <= '), !, translate(R).
+translate([bg-'1DirR'|R]) :- border, write(' => '), !, translate(R).
+translate([bg-'2DirH'|R]) :- border, write('  X '), !, translate(R).
+translate([bg-'2DirV'|R]) :- border, write('  X '), !, translate(R).
+translate([bg-'right'|R]) :- border, write('  > '), !, translate(R).
+translate([bg-'left'|R]) :- border, write(' <  '), !, translate(R).
 translate(['um'|R]) :- write('1'), !, translate(R).
 translate(['dois'|R]) :- write('2'), !, translate(R).
 translate(['tres'|R]) :- write('3'), !, translate(R).

@@ -77,8 +77,7 @@ choosePath(Path, Message) :-
         write(Message), nl,
         readCharUntilEnter(Path),
 
-        validatePathValues(Path),
-        write(Path).
+        validatePathValues(Path).
 
 
 validatePathValues([]).
@@ -89,7 +88,8 @@ validatePathValues([H|T]) :-
 readCharUntilEnter(List) :- 
         get_char(Char),
         readCharAux([Char|Tail],Char),
-        List = [Char|Tail].
+        List = [Char|Tail],
+        !.
 
 readCharUntilEnterAux([],'\n').
 readCharUntilEnterAux([Char|Tail], Char) :-
@@ -104,6 +104,9 @@ readCharUntilEnterAux([Char|Tail], Char) :-
 % --- operators ---
 ifelse(Condition, If, _Else) :- Condition, !, If.
 ifelse(_, _, Else) :- Else.
+
+ifelse(Condition1, Condition2, If, _Else) :- Condition1, Condition2, !, If.
+ifelse(_, _, _, Else) :- Else.
 
 not(X) :- X, !, fail.
 not(_X).
