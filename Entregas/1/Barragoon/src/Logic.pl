@@ -85,41 +85,6 @@ isLongMove(_Player-NDots, Path) :-
         length(Path, N),
         N == NDots.
         
-/*% --- 2 tile ---
-isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
-        X is abs(RowSrc - RowDest),
-        Y is abs(ColSrc - ColDest),
-        ifelse(X==0, Y==1, write('Short move'),  
-               ifelse(X==1, Y==0, write('Short move'),  
-                      write('Check for Full Move')
-                     )
-              ).
-% --- 3 tile ---
-isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
-        X is abs(RowSrc - RowDest),
-        Y is abs(ColSrc - ColDest),
-        ifelse(X==2, Y==0, write('Short move'),  
-               ifelse(X==1, Y==1, write('Short move'),  
-                      ifelse(X==0, Y==2, write('Short move'),  
-                             write('Check for Full Move')
-                            )
-                     )
-              ).
-
-% --- 4 tile ---
-isShortMove(RowSrc, ColSrc, RowDest, ColDest) :-
-        X is abs(RowSrc - RowDest),
-        Y is abs(ColSrc - ColDest),
-        ifelse(X==0, Y==3, write('Short move'),  
-               ifelse(X==3, Y==0, write('Short move'),  
-                      ifelse(X==1, Y==2, write('Short move'),  
-                             ifelse(X==2, Y==1, write('Short move'),  
-                                    write('Check for Full Move')
-                                   )
-                            )
-                     )
-              ).*/
-
 % -------------------------------------------------------------------------
 % ------------------------------ VALIDATIONS ------------------------------
 % -------------------------------------------------------------------------
