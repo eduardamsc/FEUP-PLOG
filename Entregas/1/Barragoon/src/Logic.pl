@@ -41,7 +41,7 @@ playerTurn(Game, NewGame) :-
         /*validateMove() -> validate move acording to the rules.*/
 
         getBoard(Game, GameBoard),
-        movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard),
+        movePiece(Game,GameBoard, RowSrc, ColSrc, Path, NewGameBoard),
 
         setBoard(Game, NewGameBoard, NewGame).
 
@@ -62,8 +62,9 @@ getDestCellFromPath(RowSrc, ColSrc, [Move|Tail], RowDest, ColDest) :-
         ).
 
 % --- Move piece ---
-movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
+movePiece(Game,GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
+        isBarragoon(Game, RowDest, ColDest),
         moveFromSrcToDest(GameBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard).
 
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
@@ -113,7 +114,6 @@ validatePathValues([H|T]) :-
 
 %validatePath(+Game, +RowSrcPos, +ColSrcPos, +Path): make sure the path is a valid one
 validatePath(RowSrc, ColSrc, Path) :-
-
         %verify if it ends inside the board
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
         RowDest < 9, RowDest >= 0,
@@ -146,7 +146,12 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
         verifyTurnsOnceAux(T, H, N1, C1).
         
 % --- Check if it is a barragoon ---
+isBarragoon(Game, Row, Col) :-
 
+        getBoard(Game, Board),
+
+        getCell(Board, Row, Col, Piece),
+        ifelse(Piece==bg-'barraX', write('A barragoon was eaten in this move!'), write('No barragoons were eaten in this move!')).
 
 % --- Check if movement is possible ---
 
