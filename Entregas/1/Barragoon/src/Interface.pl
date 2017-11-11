@@ -106,9 +106,9 @@ lowerFrame :-
 initialBoard(   [[empty, b-4, b-3, empty, b-3, b-4, empty],
                  [empty, empty, b-2, b-3, b-2, empty, empty],
                  [empty, empty, empty, empty, empty, empty, empty],
-                 [empty, bg-'barraX', empty, empty, empty, bg-'barraX', empty],
-                 [bg-'barraX', empty, bg-'barraX', empty, bg-'barraX', empty, bg-'barraX'],
-                 [empty, bg-'barraX', empty, empty, empty, bg-'barraX', empty],
+                 [empty, bg-barraX, empty, empty, empty, bg-barraX, empty],
+                 [bg-barraX, empty, bg-barraX, empty, bg-barraX, empty, bg-barraX],
+                 [empty, bg-barraX, empty, empty, empty, bg-barraX, empty],
                  [empty, empty, empty, empty, empty, empty, empty],
                  [empty, empty, w-2, w-3, w-2, empty, empty],
                  [empty, w-4, w-3, empty, w-3, w-4, empty]]).

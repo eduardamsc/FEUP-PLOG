@@ -169,7 +169,7 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
 insertBarragoon(Board, NewBoard) :-
         write('Where do you wish to place your barragoon?'), nl,
         %getPositionFromUser(Row, Collumn),
-        Row is 5, Collumn is 4,
+        Row is 1, Collumn is 1,
         write('Which barragoon do you wish to insert?'),nl,
         write('The options are:'),nl,
         write('1-  X\n2-  +\n3-  A\n4-  V\n5- <=\n6- =>\n7-  -\n8-  I\n9-  <\n10- >'),nl,
