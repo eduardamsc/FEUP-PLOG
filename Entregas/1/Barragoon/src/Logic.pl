@@ -151,7 +151,8 @@ isBarragoon(Game, Row, Col) :-
         getBoard(Game, Board),
 
         getCell(Board, Row, Col, Piece),
-        ifelse(Piece==bg-'barraX', write('A barragoon was eaten in this move!'), write('No barragoons were eaten in this move!')).
+        validBarragoons(Barragoons),
+        ifelse(member(Piece,Barragoons), write('A barragoon was eaten in this move!'), write('No barragoons were eaten in this move!')).
 
 % --- Check if movement is possible ---
 
@@ -160,6 +161,8 @@ isBarragoon(Game, Row, Col) :-
 validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
 
 validRow(Y):- Y > 48, Y < 60.
+
+validBarragoons([bg-'barraX', bg-'allDir', bg-'1DirU', bg-'1DirD', bg-'1DirL', bg-'1DirR', bg-'2DirH', bg-'2DirV', bg-'right', bg-'left']).
 
 complementary('w','s').
 complementary('s','w').
