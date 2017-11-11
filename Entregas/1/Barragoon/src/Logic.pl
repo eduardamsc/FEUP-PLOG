@@ -42,7 +42,6 @@ playerTurn(Game, NewGame) :-
 
         getBoard(Game, GameBoard),
         movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard),
-         %setCell(NewGameBoard,1, 1, bg-allDir, NewGameBoard2),
 
         setBoard(Game, NewGameBoard, NewGame).
 
@@ -65,8 +64,13 @@ getDestCellFromPath(RowSrc, ColSrc, [Move|Tail], RowDest, ColDest) :-
 % --- Move piece ---
 movePiece(GameBoard, RowSrc, ColSrc, Path, NewGameBoard) :-
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
-        isBarragoon(GameBoard, RowDest, ColDest, GameBoardAux),
-        moveFromSrcToDest(GameBoardAux,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard).
+        isBarragoon(GameBoard, RowDest, ColDest, PlaceBarragoon),
+        (
+           write(PlaceBarragoon),nl,
+           PlaceBarragoon = 0 -> write('A barragoon was eaten in this move!'),nl, insertBarragoon(GameBoard, NewBoard), moveFromSrcToDest(NewBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard);
+           PlaceBarragoon = 1 -> write('No barragoons were eaten in this move!'), moveFromSrcToDest(GameBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard)
+        
+        ).
 
 moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
         clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),
@@ -108,15 +112,11 @@ validateTile(_Game, _RowSrc, _ColSrc) :-
 %go_back to repeat cycle
 
 % --- Check if it is a barragoon ---
-isBarragoon(Board, Row, Collumn, NewBoard) :-
+isBarragoon(Board, Row, Collumn, PlaceBarragoon) :-
         getCell(Board, Row, Collumn, Piece),
         validBarragoons(Barragoons),
-        ifelse(member(Piece,Barragoons), Option is 0, Option is 1),
-        (
-           Option = 0 -> write('A barragoon was eaten in this move!'),nl, insertBarragoon(Board, NewBoard);
-           Option = 1 -> write('No barragoons were eaten in this move!')
-        
-        ).
+        ifelse(member(Piece,Barragoons), PlaceBarragoon is 0, PlaceBarragoon is 1),
+        write(PlaceBarragoon),nl.
 
 % -------------------------------------------------------------------------
 % ---------------------------- MOVEMENT RULES -----------------------------
