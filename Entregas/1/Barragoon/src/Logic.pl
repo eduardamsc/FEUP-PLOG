@@ -32,7 +32,7 @@ playerTurn(Game, NewGame) :-
 
         repeat,
         (
-            choosePath(Path, 'Please instert the path that you want to move that piece (Use WASD - eg. wwwd + Enter).')
+            choosePath(Path, 'Insert the path that you want that piece to follow:\n(Use keys WASD - eg. wwwd + Enter).')
         ),
 
         validatePath(RowSrc, ColSrc, Path),
@@ -159,7 +159,10 @@ validatePath(_, _, _) :-
         fail. 
         %go_back to repeat cycle
 
-
+validatePathValues([]).
+validatePathValues([H|T]) :- 
+        member(H,validDirections), 
+        validatePathValues(T).
 
 % --- Check if it turns just once ---
 verifyTurnsOnce([H|T]) :-
@@ -184,13 +187,14 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
 % --- Check if movement is possible ---
 
 
-% --- Valid collumns ---
+% --- Valid Coordinates ---
 validColumns(['a','b','c','d','e','f','g','A','B','C','D','E','F','G']).
 
 validRow(Y):- Y > 48, Y < 60.
 
-% --- Valid pieces ---
-/*INUTIL*/
-validTiles(['black2','black3','black4','white2','white3','white4']).
+validDirections(['w','a','s','d']).
 
-validBarragoons(['barraX', 'right','left', '1dirU', '1dirD', '2dirU', '2dirD', '2dirL', '2dirR', 'alldir']).
+complementary('w','s').
+complementary('s','w').
+complementary('a','d').
+complementary('d','a').

@@ -76,26 +76,20 @@ chooseTile(Row, Column, Message) :-
 choosePath(Path, Message) :- 
         write(Message), nl,
         readCharUntilEnter(Path),
+        
+        validatePathValues(Path). 
 
-        validatePathValues(Path).
-
-
-validatePathValues([]).
-validatePathValues([H|T]) :- 
-        member(H,['w','a','s','d']), 
-        validatePathValues(T).
-
+% --- Get path ---
 readCharUntilEnter(List) :- 
         get_char(Char),
-        readCharAux([Char|Tail],Char),
+        readCharUntilEnterAux([Char|Tail],Char),
         List = [Char|Tail],
         !.
 
 readCharUntilEnterAux([],'\n').
 readCharUntilEnterAux([Char|Tail], Char) :-
         get_char(NewChar),
-        readCharAuxUntilEnter(Tail,NewChar).
-        
+        readCharUntilEnterAux(Tail,NewChar).       
 
 % -------------------------------------------------------------------------
 % ----------------------------- CONDITIONS --------------------------------
@@ -170,8 +164,3 @@ switchPlayer(Game, NextPlayerGame):-
                 NextPlayer = b,
                 NextPlayer = w),
         NextPlayerGame = [Board, NextPlayer, Mode].
-
-complementary('w','s').
-complementary('s','w').
-complementary('a','d').
-complementary('d','a').
