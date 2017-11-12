@@ -12,10 +12,11 @@ mainMenu :-
         getCharThenEnter(Option),
         (
            Option = '1' -> startGame(pvp);
-           Option = '2' -> startGame(pvc);
-           Option = '3' -> startGame(cvc);
-           Option = '4' -> displayRules;
-           Option = '5';
+           Option = '2' -> startGame(pvc-easy);
+           Option = '3' -> startGame(pvc-hard);
+           Option = '4' -> startGame(cvc-hard);
+           Option = '5' -> displayRules;
+           Option = '6';
 
            clearScreen,
            write('ERROR : invalid input...'), spacing(1),
@@ -30,11 +31,12 @@ displayMainMenu :-
         write('|                ***************************                |'),nl,
         write('|                Play:                                      |'),nl,
         write('|                1 - Player vs Player                       |'),nl,
-        write('|                2 - Player vs Computer                     |'),nl,
-        write('|                3 - Computer vs Computer                   |'),nl,
+        write('|                2 - Player vs Computer Easy                |'),nl,
+        write('|                3 - Player vs Computer Hard                |'),nl,
+        write('|                4 - Computer vs Computer                   |'),nl,
         write('|                                                           |'),nl,
-        write('|                4 - Rules                                  |'),nl,
-        write('|                5 - Quit                                   |'),nl,
+        write('|                5 - Rules                                  |'),nl,
+        write('|                6 - Quit                                   |'),nl,
         lowerFrame.
 
 displayRules :- 
@@ -118,7 +120,7 @@ displayGame(Game) :-
         getBoard(Game, Board),
         getCurrentPlayer(Game, Player),
 
-        %clearScreen,
+        clearScreen,
         displayPlayerTurn(Player),
         lettersAxis,nl,
         horizontalBorder, nl,
@@ -183,7 +185,7 @@ border :- write('|').
 
 finalBoard([     [bg-'barraX', b-4, empty, b-2, b-3, b-4, bg-'barraX'],
                  [empty, bg-'barraX', empty, empty, empty, bg-'barraX', empty],
-                 [empty, bg-'barraX', empty, empty, empty, empty, empty],
+                 [empty, bg-'barraX', empty, empty, w-2, empty, empty],
                  [bg-'barraX', w-2, bg-'barraX', empty, empty, bg-barraX, empty],
                  [empty, bg-'barraX', empty, empty, bg-barraX, empty, bg-barraX],
                  [empty, bg-barraX, empty, empty, empty, bg-barraX, empty],

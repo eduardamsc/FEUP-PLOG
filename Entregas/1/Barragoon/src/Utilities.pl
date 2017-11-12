@@ -135,6 +135,10 @@ getCurrentPlayer(Game, CurrentPlayer):-
 getMode(Game, Mode):-
         nth0(2, Game, Mode).
 
+% --- Get Difficulty ---
+getDifficulty(Game, Difficulty):-
+        nth0(2, Game, _-Difficulty).
+
 % -- Get Empty Cells
 getEmptyPlaces(Game, List):-
 
@@ -163,7 +167,7 @@ getPlayerType(Game, PlayerType) :-
 
         (
                 Mode = pvp -> PlayerType = player;
-                Mode = pvc -> (
+                Mode = pvc-_ -> (
                         CurrentPlayer = w -> PlayerType = player;
                         CurrentPlayer = b -> PlayerType = bot
                 );

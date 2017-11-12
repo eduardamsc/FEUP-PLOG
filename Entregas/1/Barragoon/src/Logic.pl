@@ -107,14 +107,21 @@ botMove(Game, Row, Column, Path):-
 
                 getMovesAvailable(Game, Row, Column, MovesAvailable)
         ),
-        getRandomElemFromList(MovesAvailable, Path).
+        botChooseMove(Game, MovesAvailable, Path).
+
+botChooseMove(Game, MovesAvailable, Path) :-
+        getDifficulty(Game, Difficulty),
+        ifelse(Difficulty = hard,
+                (
+                        length(MovesAvailable, N),
+                        N > 0,
+                        !,
+
+                        nth0(0, MovesAvailable, Path)
+                ),
+                getRandomElemFromList(MovesAvailable, Path)
+        ). 
         
-
-
-        
-
-
-
 
 % -------------------------------------------------------------------------
 % ------------------------------ MOVEMENTS --------------------------------
@@ -685,10 +692,13 @@ getMovesAvailable(Game, Row, Column, List) :-
 
 getMovesAvailableAux(_,_,_,[],[]).
 getMovesAvailableAux(Game, Row, Column, [Path | Tail], List) :-
-        ifelse( (validatePath(Row, Column, Path, false), validateMove(Game, Row, Column, Path, _, false)),
+        ifelse( (validatePath(Row, Column, Path, false), validateMove(Game, Row, Column, Path, PieceCaptured, false)),
                 (
                         getMovesAvailableAux(Game, Row, Column, Tail, List1),
-                        List = [Path | List1]
+                        ifelse( PieceCaptured = playerPiece, 
+                                List = [Path | List1],
+                                append(List1, [Path], List)
+                        )
                 ),
                 (
                         getMovesAvailableAux(Game, Row, Column, Tail, List)
