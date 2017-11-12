@@ -74,10 +74,14 @@ chooseTile(Row, Column, Message) :-
         Row is RowCode-49.
 
 choosePath(Path, Message) :- 
-        write(Message), nl,
+        nl, write(Message), nl,
         readCharUntilEnter(Path),
 
         validatePathValues(Path).
+
+choosePath(_,_) :- 
+        nl, write('Wrong path values. Please try again.'), nl,
+        fail.
 
 % --- Get path ---
 readCharUntilEnter(List) :- 
