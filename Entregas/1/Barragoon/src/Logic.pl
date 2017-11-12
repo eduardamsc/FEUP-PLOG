@@ -49,9 +49,7 @@ isGameOver(Game) :-
 gameOver(Game) :-
 
         nl, write('And the Winner is...'), nl, nl, 
-        getCurrentPlayer(Game, Winner),
         displayGame(Game),
-        displayPlayerTurn(Winner),
         nl, write('Bye').
 
 
