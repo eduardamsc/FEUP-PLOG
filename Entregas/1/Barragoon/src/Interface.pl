@@ -11,9 +11,9 @@ mainMenu :-
         displayMainMenu,
         getCharThenEnter(Option),
         (
-           Option = '1' -> startGamePvP;
-           Option = '2';
-           Option = '3';
+           Option = '1' -> startGame(pvp);
+           Option = '2' -> startGame(pvc);
+           Option = '3' -> startGame(cvc);
            Option = '4' -> displayRules;
            Option = '5';
 
@@ -118,7 +118,7 @@ displayGame(Game) :-
         getBoard(Game, Board),
         getCurrentPlayer(Game, Player),
 
-        clearScreen,
+        %clearScreen,
         displayPlayerTurn(Player),
         lettersAxis,nl,
         horizontalBorder, nl,
@@ -157,18 +157,18 @@ translate([bg-'LtoU'|R]) :- border, write(' -^ '), !, translate(R).
 translate([bg-'LtoD'|R]) :- border, write(' -v '), !, translate(R).
 translate([bg-'RtoU'|R]) :- border, write(' ^- '), !, translate(R).
 translate([bg-'RtoD'|R]) :- border, write(' v- '), !, translate(R).
-translate(['um'|R]) :- write('1'), !, translate(R).
-translate(['dois'|R]) :- write('2'), !, translate(R).
-translate(['tres'|R]) :- write('3'), !, translate(R).
-translate(['quatro'|R]) :- write('4'), !, translate(R).
-translate(['cinco'|R]) :- write('5'), !, translate(R).
-translate(['seis'|R]) :- write('6'), !, translate(R).
-translate(['sete'|R]) :- write('7'), !, translate(R).
-translate(['oito'|R]) :- write('8'), !, translate(R).
-translate(['nove'|R]) :- write('9'), !, translate(R).
+translate(['1'|R]) :- write('1'), !, translate(R).
+translate(['2'|R]) :- write('2'), !, translate(R).
+translate(['3'|R]) :- write('3'), !, translate(R).
+translate(['4'|R]) :- write('4'), !, translate(R).
+translate(['5'|R]) :- write('5'), !, translate(R).
+translate(['6'|R]) :- write('6'), !, translate(R).
+translate(['7'|R]) :- write('7'), !, translate(R).
+translate(['8'|R]) :- write('8'), !, translate(R).
+translate(['9'|R]) :- write('9'), !, translate(R).
 
 % -- Board Axis --
-numbersAxis([um, dois, tres, quatro, cinco, seis, sete, oito, nove]).
+numbersAxis(['1', '2', '3', '4', '5', '6', '7', '8', '9']).
 
 lettersAxis :- write('    A    B    C    D    E    F    G').
 

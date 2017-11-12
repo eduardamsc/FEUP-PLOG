@@ -6,15 +6,15 @@
 % ----------------------------------- GAME  -------------------------------
 % -------------------------------------------------------------------------
 
-% --- Game Loop ---
-startGamePvP:-
-        initializeGamePvP(Game),
+startGame(Mode):-
+        initializeGame(Game, Mode),
         playGame(Game).
 
-initializeGamePvP(Game):-
+initializeGame(Game, Mode):-
         initialBoard(Board),
-        Game = [Board, w, pvp], !.
+        Game = [Board, w, Mode], !.
 
+% --- Game Loop ---
 playGame(Game) :-
         ifelse(isGameOver(Game),
                 (
@@ -61,9 +61,12 @@ playerTurn(Game, NewGame) :-
         displayGame(Game),
 
         %do playerMove while not validateMove:
+
+        getPlayerType(Game, PlayerType),
         repeat,
         (        
-                playerMove(Game, RowSrc, ColSrc, Path)
+                PlayerType = player -> playerMove(Game, RowSrc, ColSrc, Path);
+                PlayerType = bot -> botMove(Game, RowSrc, ColSrc, Path)
         ),
         validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured),
         !,
@@ -96,6 +99,24 @@ playerMove(Game, RowSrc, ColSrc, Path) :-
         validatePath(RowSrc, ColSrc, Path),
         !.
 
+botMove(Game, Row, Column, Path):-
+
+        repeat,
+        (
+                getPlayerPieces(Game, Pieces),
+
+                getRandomElemFromList(Pieces, [Row, Column]),
+
+                getMovesAvailable(Game, Row, Column, MovesAvailable)
+        ),
+        getRandomElemFromList(MovesAvailable, Path).
+        
+
+
+        
+
+
+
 
 % -------------------------------------------------------------------------
 % ------------------------------ MOVEMENTS --------------------------------
@@ -114,16 +135,13 @@ getDestCellFromPath(RowSrc, ColSrc, [Move|Tail], RowDest, ColDest) :-
 
 % --- Move piece ---
 movePiece(Game, RowSrc, ColSrc, Path, NewGame) :-
-        getBoard(Game, GameBoard),
 
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
-        moveFromSrcToDest(GameBoard,RowSrc,ColSrc,RowDest,ColDest,NewGameBoard),
+        moveFromSrcToDest(Game,RowSrc,ColSrc,RowDest,ColDest,NewGame).
 
-        setBoard(Game, NewGameBoard, NewGame).
-
-moveFromSrcToDest(GameBoard, RowSrc, ColSrc, RowDest, ColDest, NewGameBoard) :-
-        clearCell(GameBoard,  RowSrc,  ColSrc,  Value, NewGameBoard1),
-        setCell(NewGameBoard1,RowDest, ColDest, Value, NewGameBoard).
+moveFromSrcToDest(Game, RowSrc, ColSrc, RowDest, ColDest, NewGame) :-
+        clearCell(Game,  RowSrc,  ColSrc,  Value, NewGame1),
+        setCell(NewGame1,RowDest, ColDest, Value, NewGame).
 
 % --- Check if it is a short move ---
 %isShortMove(+Piece, +Path)
@@ -161,8 +179,8 @@ validateTile(_Game, _RowSrc, _ColSrc) :-
 %go_back to repeat cycle
 
 % --- Check if it is a barragoon ---
-isBarragoon(Board, Row, Collumn, PlaceBarragoon) :-
-        getCell(Board, Row, Collumn, Piece),
+isBarragoon(Board, Row, Column, PlaceBarragoon) :-
+        getCell(Board, Row, Column, Piece),
         validBarragoons(Barragoons),
         ifelse(member(Piece,Barragoons), PlaceBarragoon is 0, PlaceBarragoon is 1).
 
@@ -478,11 +496,18 @@ playerPieceCaptured(Game, NewGame) :-
 
 % --- Insert new barragoon ---
 insertBarragoon(Game, NewGame) :-
-        getBoard(Game, Board),
-
         displayGame(Game),
+        
+        getPlayerType(Game, PlayerType),
+        repeat,
+        (
+                PlayerType = player -> chooseTile(Row, Column, 'Where do you wish to place your barragoon?');
+                PlayerType = bot -> botChooseTile(Game, Row, Column)
+        ),
+        getCell(Game, Row, Column, empty),
+        !,
+        
 
-        chooseTile(Row, Collumn, 'Where do you wish to place your barragoon?'),
         write('Which barragoon do you wish to insert?'),nl,
         write('The options are:'),nl,
         write( '1-  X'),nl,
@@ -491,72 +516,111 @@ insertBarragoon(Game, NewGame) :-
         write('4-  <=> (Two Directions)'),nl,
         write('5-  \'> (Left Turn)'),nl,
         write('6-  <\' (Right Turn)'),nl,
-        getCharThenEnter(Option),
+        getPlayerType(Game, PlayerType),
         (
-           Option = '1' -> setCell(Board, Row, Collumn, bg-'barraX', NewBoard);
-           Option = '2' -> setCell(Board, Row, Collumn, bg-'allDir', NewBoard);
-           Option = '3' -> insertOneDirectionBg(Board, Row, Collumn, NewBoard);
-           Option = '4' -> insertTwoDirectionsBg(Board, Row, Collumn, NewBoard);
-           Option = '5' -> insertTurnToTheLeft(Board, Row, Collumn, NewBoard);
-           Option = '6' -> insertTurnToTheRight(Board, Row, Collumn, NewBoard)
+                PlayerType = player -> getCharThenEnter(Option);
+                PlayerType = bot -> (
+                        random(1,7, OptionInt), 
+                        numberAxis(Numbers), 
+                        nth1(OptionInt, Numbers, Option)
+                )
         ),
-        
-        setBoard(Game, NewBoard, NewGame).
+        (
+           Option = '1' -> setCell(Game, Row, Column, bg-'barraX', NewGame);
+           Option = '2' -> setCell(Game, Row, Column, bg-'allDir', NewGame);
+           Option = '3' -> insertOneDirectionBg(Game, Row, Column, NewGame);
+           Option = '4' -> insertTwoDirectionsBg(Game, Row, Column, NewGame);
+           Option = '5' -> insertTurnToTheLeft(Game, Row, Column, NewGame);
+           Option = '6' -> insertTurnToTheRight(Game, Row, Column, NewGame)
+        ).
 
-insertOneDirectionBg(Board, Row, Collumn, NewBoard):-
+insertOneDirectionBg(Game, Row, Column, NewGame):-
         nl, write('In which diretion you want to set the barragoon?'),nl,
         write('The options are:'),nl,
         write( '1-  A (Up)'),nl,
         write('2-  V (Down)'),nl,
         write('3-  => (Right)'),nl,
         write('4-  <= (Left)'),nl,
-        getCharThenEnter(Option),
+
+        getPlayerType(Game, PlayerType),
         (
-                Option = '1' -> setCell(Board, Row, Collumn, bg-'oDirU', NewBoard);
-                Option = '2' -> setCell(Board, Row, Collumn, bg-'oDirD', NewBoard);
-                Option = '3' -> setCell(Board, Row, Collumn, bg-'oDirR', NewBoard);
-                Option = '4' -> setCell(Board, Row, Collumn, bg-'oDirL', NewBoard)
+                PlayerType = player -> getCharThenEnter(Option);
+                PlayerType = bot -> (
+                        random(1,5, OptionInt), 
+                        numberAxis(Numbers), 
+                        nth1(OptionInt, Numbers, Option)
+                )
+        ),        
+        (
+                Option = '1' -> setCell(Game, Row, Column, bg-'oDirU', NewGame);
+                Option = '2' -> setCell(Game, Row, Column, bg-'oDirD', NewGame);
+                Option = '3' -> setCell(Game, Row, Column, bg-'oDirR', NewGame);
+                Option = '4' -> setCell(Game, Row, Column, bg-'oDirL', NewGame)
         ).
 
-insertTwoDirectionsBg(Board, Row, Collumn, NewBoard):-
+insertTwoDirectionsBg(Game, Row, Column, NewGame):-
         nl, write('In which diretion you want to set the barragoon?'),nl,
         write('The options are:'),nl,
         write( '1-  <> (Horizontal)'),nl,
         write('2-  I (Vertical)'),nl,
-        getCharThenEnter(Option),
+        getPlayerType(Game, PlayerType),
         (
-                Option = '1' -> setCell(Board, Row, Collumn, bg-'tDirH', NewBoard);
-                Option = '2' -> setCell(Board, Row, Collumn, bg-'tDirV', NewBoard)
+                PlayerType = player -> getCharThenEnter(Option);
+                PlayerType = bot -> (
+                        random(1,3, OptionInt), 
+                        numberAxis(Numbers), 
+                        nth1(OptionInt, Numbers, Option)
+                )
+        ),        
+        (
+                Option = '1' -> setCell(Game, Row, Column, bg-'tDirH', NewGame);
+                Option = '2' -> setCell(Game, Row, Column, bg-'tDirV', NewGame)
         ).
 
-insertTurnToTheLeft(Board, Row, Collumn, NewBoard):-
+insertTurnToTheLeft(Game, Row, Column, NewGame):-
         nl, write('In which diretion you want to set the barragoon?'),nl,
         write('The options are:'),nl,
-        write( '1-  <. (Down to Left)'),nl,
+        write('1-  <. (Down to Left)'),nl,
         write('2-  -^ (Left to Up)'),nl,
         write('3-  \'> (Up to Right)'),nl,
         write('4-  v- (Right to Down)'),nl,
-        getCharThenEnter(Option),
+        getPlayerType(Game, PlayerType),
         (
-                Option = '1' -> setCell(Board, Row, Collumn, bg-'DtoL', NewBoard);
-                Option = '2' -> setCell(Board, Row, Collumn, bg-'LtoU', NewBoard);
-                Option = '3' -> setCell(Board, Row, Collumn, bg-'UtoR', NewBoard);
-                Option = '4' -> setCell(Board, Row, Collumn, bg-'RtoD', NewBoard)
+                PlayerType = player -> getCharThenEnter(Option);
+                PlayerType = bot -> (
+                        random(1,5, OptionInt), 
+                        numberAxis(Numbers), 
+                        nth1(OptionInt, Numbers, Option)
+                )
+        ),        
+        (
+                Option = '1' -> setCell(Game, Row, Column, bg-'DtoL', NewGame);
+                Option = '2' -> setCell(Game, Row, Column, bg-'LtoU', NewGame);
+                Option = '3' -> setCell(Game, Row, Column, bg-'UtoR', NewGame);
+                Option = '4' -> setCell(Game, Row, Column, bg-'RtoD', NewGame)
         ).
 
-insertTurnToTheRight(Board, Row, Collumn, NewBoard):-
+insertTurnToTheRight(Game, Row, Column, NewGame):-
         nl, write('In which diretion you want to set the barragoon?'),nl,
         write('The options are:'),nl,
         write( '1-  .> (Down to Right)'),nl,
         write('2-  ^- (Right to Up)'),nl,
         write('3-  <\' (Up to Left)'),nl,
         write('4-  -v (Left to Down)'),nl,
-        getCharThenEnter(Option),
+        getPlayerType(Game, PlayerType),
         (
-                Option = '1' -> setCell(Board, Row, Collumn, bg-'DtoR', NewBoard);
-                Option = '2' -> setCell(Board, Row, Collumn, bg-'RtoU', NewBoard);
-                Option = '3' -> setCell(Board, Row, Collumn, bg-'UtoL', NewBoard);
-                Option = '4' -> setCell(Board, Row, Collumn, bg-'LtoD', NewBoard)
+                PlayerType = player -> getCharThenEnter(Option);
+                PlayerType = bot -> (
+                        random(1,5, OptionInt), 
+                        numberAxis(Numbers), 
+                        nth1(OptionInt, Numbers, Option)
+                )
+        ),        
+        (
+                Option = '1' -> setCell(Game, Row, Column, bg-'DtoR', NewGame);
+                Option = '2' -> setCell(Game, Row, Column, bg-'RtoU', NewGame);
+                Option = '3' -> setCell(Game, Row, Column, bg-'UtoL', NewGame);
+                Option = '4' -> setCell(Game, Row, Column, bg-'LtoD', NewGame)
         ).
 
 
@@ -618,23 +682,29 @@ countPlayerPieces([[_Piece | RowRest] | BoardRest], CurrentPlayer, Count) :-
 
 % --- Count Moves Available ---
 
-countMovesAvailable(Game, Row, Column, Count) :-
+countMovesAvailable(Game, Row, Column, Count):-
+        getMovesAvailable(Game, Row, Column, List),
+        length(List, Count).
+
+
+
+getMovesAvailable(Game, Row, Column, List) :-
         getBoard(Game, Board),
 
         getCell(Board, Row, Column, _Player-NDots),
         availableMoves(NDots, AllMovesAvailable),
 
-        countMovesAvailableAux(Game, Row, Column, AllMovesAvailable, Count).
+        getMovesAvailableAux(Game, Row, Column, AllMovesAvailable, List).
 
-countMovesAvailableAux(_,_,_,[],0).
-countMovesAvailableAux(Game, Row, Column, [Path | Tail], Count) :-
+getMovesAvailableAux(_,_,_,[],[]).
+getMovesAvailableAux(Game, Row, Column, [Path | Tail], List) :-
         ifelse( (validatePath(Row, Column, Path, false), validateMove(Game, Row, Column, Path, _, false)),
                 (
-                        countMovesAvailableAux(Game, Row, Column, Tail, Count1),
-                        Count is Count1+1
+                        getMovesAvailableAux(Game, Row, Column, Tail, List1),
+                        List = [Path | List1]
                 ),
                 (
-                        countMovesAvailableAux(Game, Row, Column, Tail, Count)
+                        getMovesAvailableAux(Game, Row, Column, Tail, List)
                 )
         ).
 

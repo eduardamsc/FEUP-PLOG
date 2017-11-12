@@ -1,4 +1,3 @@
-:- use_module(library(lists)).
 %-------------------------------%
 %--------Useful functions-------%
 %-------------------------------%
@@ -83,6 +82,12 @@ choosePath(_,_) :-
         nl, write('Wrong path values. Please try again.'), nl,
         fail.
 
+botChooseTile(Game, Row, Column):-
+
+        getEmptyPlaces(Game, EmptyPlaces), 
+
+        getRandomElemFromList(EmptyPlaces, [Row, Column]).
+
 % --- Get path ---
 readCharUntilEnter(List) :- 
         get_char(Char),
@@ -125,8 +130,45 @@ getCurrentPlayer(Game, CurrentPlayer):-
         nth0(1, Game, CurrentPlayer).
 
 % --- Get game mode ---
-getGameMode(Game, Mode):-
+getMode(Game, Mode):-
         nth0(2, Game, Mode).
+
+% -- Get Empty Cells
+getEmptyPlaces(Game, List):-
+        
+        getBoard(Game, Board),
+
+        getEmptyPlacesAux(Board, 0, 0, List).
+
+getEmptyPlacesAux(_,9,_,[]).
+getEmptyPlacesAux(Board,Row,7,List) :-
+        Row1 is Row+1,
+        getEmptyPlacesAux(Board,Row1,0,List).
+getEmptyPlacesAux(Board, Row, Column, List) :-
+
+        Column1 is Column+1,
+
+        ifelse( getCell(Board, Row, Column, empty),
+                (
+                        getEmptyPlacesAux(Board, Row, Column1, List1),
+                        List = [[Row, Column] | List1]
+                ),
+                getEmptyPlacesAux(Board, Row, Column1, List)
+        ).
+
+getPlayerType(Game, PlayerType) :-
+
+        getCurrentPlayer(Game, CurrentPlayer),
+        getMode(Game, Mode),
+
+        (
+                Mode = pvp -> PlayerType = player;
+                Mode = pvc -> (
+                        CurrentPlayer = w -> PlayerType = player;
+                        CurrentPlayer = b -> PlayerType = bot
+                );
+                Mode = cvc -> PlayerType = bot
+        ).
 
 % -------------------------------------------------------------------------
 % ---------------------------- CHANGE BOARD -------------------------------
@@ -137,30 +179,54 @@ replaceInList([_|T], 0, X, [X|T]).
 replaceInList([H|T], I, X, [H|R]):- I > -1, NI is I-1, replaceInList(T, NI, X, R), !.
 replaceInList(L, _, _, L).
 
+% --- Get random element from a List ---
+getRandomElemFromList(List, Value) :-
+
+        length(List, ListLength),
+
+        random(0,ListLength, ElemIndex),
+
+        nth0(ElemIndex, List, Value).
+
 % --- Clear a cell ---
-clearCell(Board, NRow, NColumn, Value, NewBoard) :-
+clearCell(Game, NRow, NColumn, Value, NewGame) :-
+
+        getBoard(Game, Board),
         /*Get Value*/
         nth0(NRow, Board, Row),
         nth0(NColumn, Row, Value),
         /*Clear cell*/
         replaceInList(Row, NColumn, empty, NewRow),
-        replaceInList(Board, NRow, NewRow, NewBoard).
+        replaceInList(Board, NRow, NewRow, NewBoard),
+        
+        setBoard(Game, NewBoard, NewGame).
 
 % --- Change cell value ---
-setCell(Board, NRow, NColumn, Value, NewBoard) :-
+setCell(Game, NRow, NColumn, Value, NewGame) :-
+
+        getBoard(Game, Board),
+
         nth0(NRow, Board, Row),
         replaceInList(Row, NColumn, Value, NewRow),
-        replaceInList(Board, NRow, NewRow, NewBoard).
+        replaceInList(Board, NRow, NewRow, NewBoard),
+        
+        setBoard(Game, NewBoard, NewGame).
 
 % --- Change board ---
 setBoard(Game, NewBoard, NewGame):-
         replaceInList(Game, 0, NewBoard, NewGame).
 
+setCurrentPlayer(Game, NewPlayer, NewGame):-
+        replaceInList(Game, 1, NewPlayer, NewGame).
+        
+setMode(Game, NewMode, NewGame):-
+        replaceInList(Game, 2, NewMode, NewGame).
+
 % --- Change player ---
 switchPlayer(Game, NextPlayerGame):-
         getBoard(Game, Board),
         getCurrentPlayer(Game, CurrentPlayer),
-        getGameMode(Game, Mode),
+        getMode(Game, Mode),
         ifelse( CurrentPlayer == w ,
                 NextPlayer = b,
                 NextPlayer = w),
@@ -222,10 +288,3 @@ availableMoves(4, [     %fullMove
                         ['a','w','w'], ['w','w','a']
                 ]).
 
-
-test(X) :-
-        X = 'Leo'.
-
-test2(Msg, X) :- 
-        (Msg -> write('msg') ; true),
-        test(X).
