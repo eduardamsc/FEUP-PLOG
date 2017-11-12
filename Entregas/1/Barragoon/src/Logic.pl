@@ -420,13 +420,14 @@ barragoonCaptured(Game, NewGame) :-
         insertBarragoon(Game, NewGame).
 
 % --- When a player piece is captured ---
-playerPieceCaptured(Game, NewGame) :-      
-        insertBarragoon(Game, FirstBarragoonAddedGame),
+playerPieceCaptured(Game, NewGame) :-  
+        switchPlayer(Game, NewGame1),    
+        insertBarragoon(NewGame1, FirstBarragoonAddedGame),
 
-        switchPlayer(FirstBarragoonAddedGame, NextPlayerGame),
-        insertBarragoon(NextPlayerGame, SecondBarragoonAddedGame),
+        switchPlayer(FirstBarragoonAddedGame,NewGame2),
+        insertBarragoon(NewGame2, NewGame).
         
-        switchPlayer(SecondBarragoonAddedGame,NewGame).
+        
 
 % --- Insert new barragoon ---
 insertBarragoon(Game, NewGame) :-
