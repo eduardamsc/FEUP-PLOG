@@ -171,7 +171,7 @@ getPlayerType(Game, PlayerType) :-
                         CurrentPlayer = w -> PlayerType = player;
                         CurrentPlayer = b -> PlayerType = bot
                 );
-                Mode = cvc -> PlayerType = bot
+                Mode = cvc-_ -> PlayerType = bot
         ).
 
 % -------------------------------------------------------------------------

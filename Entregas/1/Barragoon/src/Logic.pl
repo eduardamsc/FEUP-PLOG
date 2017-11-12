@@ -111,17 +111,17 @@ botMove(Game, Row, Column, Path):-
 
 botChooseMove(Game, MovesAvailable, Path) :-
         getDifficulty(Game, Difficulty),
-        ifelse(Difficulty = hard,
-                (
+        (
+                Difficulty = hard -> (
                         length(MovesAvailable, N),
                         N > 0,
                         !,
 
                         nth0(0, MovesAvailable, Path)
-                ),
-                getRandomElemFromList(MovesAvailable, Path)
+                );
+                Difficulty = easy -> getRandomElemFromList(MovesAvailable, Path)
         ). 
-        
+
 
 % -------------------------------------------------------------------------
 % ------------------------------ MOVEMENTS --------------------------------
