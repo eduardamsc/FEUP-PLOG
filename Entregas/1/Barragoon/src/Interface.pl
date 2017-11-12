@@ -38,6 +38,7 @@ displayMainMenu :-
         lowerFrame.
 
 displayRules :- 
+        clearScreen,
         upperFrame,
         titleFrame,
         write('|                ***************************                |'),nl,
@@ -55,11 +56,10 @@ displayRules :-
         write('|     the board, 1 per player and the first to place it is  |'),nl,
         write('|     the one whose tile was captured.                      |'),nl,
         write('|  6. Once a barragoon is placed, it can\'t be moved.        |'),nl, 
-        write('|  7. During a move, there can only be one change of    |'),nl, 
+        write('|  7. During a move, there can only be one change of        |'),nl, 
         write('|     direction.                                            |'),nl,
         write('|  8. Movements can only be vertical or horizontal, never   |'),nl, 
         write('|     diagonal.                                             |'),nl,
-        write('|  9. During a move, there can only be one 90º turn.        |'),nl, 
         lowerFrame,
         spacing(2),
         next, mainMenu, !.
