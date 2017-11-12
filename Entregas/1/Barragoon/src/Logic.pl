@@ -16,9 +16,46 @@ initializeGamePvP(Game):-
         Game = [Board, w, pvp], !.
 
 playGame(Game) :-
-        playerTurn(Game, UpdatedGame),
-        switchPlayer(UpdatedGame, NextPlayerGame),
-        playGame(NextPlayerGame).
+        ifelse(isGameOver(Game),
+                (
+                        switchPlayer(Game, EndGame),
+                        getCurrentPlayer(EndGame, Winner),
+                        gameOver(Winner)
+                ),
+                (
+                        playerTurn(Game, UpdatedGame),
+                        switchPlayer(UpdatedGame, NextPlayerGame),
+                        playGame(NextPlayerGame)
+                )).
+
+isGameOver(Game) :-
+        getBoard(Game, Board),
+        getCurrentPlayer(Game, CurrentPlayer),
+        
+        %check is current player still has any piece
+        countPlayerPieces(Board, CurrentPlayer, CountPieces),
+        !,
+        ifelse(CountPieces = 0,
+                true,
+                (
+                        countMovesAvailableAllPieces(Game, CountMoves),
+                        !,
+                        ifelse(CountMoves = 0,
+                                true,
+                                fail
+                        )
+                )
+        ).
+
+gameOver(Winner) :-
+
+        nl, write('And the Winner is...'), nl, nl, 
+
+        displayPlayerTurn(Winner),
+        nl, write('Bye').
+
+
+
 
 playerTurn(Game, NewGame) :- 
         displayGame(Game),
@@ -97,8 +134,8 @@ isShortMove(_Player-NDots, Path) :-
         N1 == NDots.
 
 % --- Check if it is a long move ---
-%isLongMove(+Piece, +Path)
-isLongMove(_Player-NDots, Path) :-
+%isFullMove(+Piece, +Path)
+isFullMove(_Player-NDots, Path) :-
         length(Path, N),
         N == NDots.
 
@@ -140,6 +177,9 @@ validatePathValues([H|T]) :-
         validatePathValues(T).
 
 validatePath(RowSrc, ColSrc, Path) :-
+        validatePath(RowSrc, ColSrc, Path, true).
+
+validatePath(RowSrc, ColSrc, Path, _) :-
         %verify if it ends inside the board
         getDestCellFromPath(RowSrc, ColSrc, Path, RowDest, ColDest),
         RowDest < 9, RowDest >= 0,
@@ -148,29 +188,36 @@ validatePath(RowSrc, ColSrc, Path) :-
         %verify if it turns just once
         verifyTurnsOnce(Path).
 
-validatePath(_, _, _) :-
-        write('That path is not valid!'), nl,
-        write('Please, try another path.'), nl,
+validatePath(_, _, _, ErrorMessageFlag) :-
+        (ErrorMessageFlag -> (
+                write('That path is not valid!'), nl,
+                write('Please, try another path.'), nl
+        ); true),
         fail. 
 %go_back to repeat cycle
 
-validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured) :- 
+
+validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured) :-
+        validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured, true).
+        
+
+validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured, ErrorMessageFlag) :- 
         getBoard(Game, Board), 
 
         getCell(Board, RowSrc,ColSrc, Piece),
         (
-                isShortMove(Piece, Path) -> IsLongMove is 0;
-                isLongMove(Piece, Path) -> IsLongMove is 1;
+                isShortMove(Piece, Path) -> IsFullMove is 0;
+                isFullMove(Piece, Path) -> IsFullMove is 1;
 
-                write('Invalid number of movimentations.\nPlease introduce another move\n\n'),
+                (ErrorMessageFlag -> write('Invalid number of movimentations.\nPlease introduce another move\n\n'); true),
                 fail
         ),
 
-        validateCrossMovements(Game, RowSrc, ColSrc, Path, IsLongMove, Piece, PieceCaptured).     
+        validateCrossMovements(Game, RowSrc, ColSrc, Path, IsFullMove, Piece, PieceCaptured, ErrorMessageFlag).     
 
 
 %validateCrossMovements -> verify capture issues.
-validateCrossMovements(Game, RowSrc, ColSrc, [LastMove], IsLongMove, PieceMoved, PieceCaptured) :-
+validateCrossMovements(Game, RowSrc, ColSrc, [LastMove], IsFullMove, PieceMoved, PieceCaptured, ErrorMessageFlag) :-
         getBoard(Game, Board),
         getCurrentPlayer(Game, CurrentPlayer),
 
@@ -181,17 +228,17 @@ validateCrossMovements(Game, RowSrc, ColSrc, [LastMove], IsLongMove, PieceMoved,
         ifelse(Piece = 'empty',
                 emptyTile(PieceCaptured),
                 ifelse(Piece = bg-BgType,
-                        ifelse(IsLongMove == 1,
+                        ifelse(IsFullMove == 1,
                                 ifelse((PieceMoved = _P-2, BgType = 'allDir'),
-                                        (write('You cannot capture an All Directions Barragoon piece with a Two Dotted Tile.\n\n'), fail),
+                                        ((ErrorMessageFlag -> write('You cannot capture an All Directions Barragoon piece with a Two Dotted Tile.\n\n'); true), fail),
                                         true),
-                                (write('You cannot capture a piece during a short move.\n\n'), fail)),
+                                ((ErrorMessageFlag -> write('You cannot capture a piece during a short move.\n\n'); true), fail)),
                         ifelse(Piece = CurrentPlayer-_,
-                                (write('You may not capture your own piece.\n\n'), fail),
+                                ((ErrorMessageFlag -> write('You may not capture your own piece.\n\n'); true), fail),
                                 playerPieceCaptured(PieceCaptured)))).
 
 %validateCrossMovements -> verify cross issues.
-validateCrossMovements(Game, RowSrc, ColSrc, [FirstMove, SecondMove | PathRest], IsLongMove, PieceMoved,PieceCaptured) :-
+validateCrossMovements(Game, RowSrc, ColSrc, [FirstMove, SecondMove | PathRest], IsFullMove, PieceMoved,PieceCaptured, ErrorMessageFlag) :-
         getBoard(Game, Board), 
 
         getDestCellFromPath(RowSrc,ColSrc,[FirstMove], RowDest1, ColDest1),
@@ -201,12 +248,12 @@ validateCrossMovements(Game, RowSrc, ColSrc, [FirstMove, SecondMove | PathRest],
 
 
         ifelse(Piece1 = bg-BgType,
-                verifyBarragoonCrossability(RowSrc,ColSrc,RowDest1,ColDest1,RowDest2,ColDest2,BgType),
+                verifyBarragoonCrossability(RowSrc,ColSrc,RowDest1,ColDest1,RowDest2,ColDest2,BgType,ErrorMessageFlag),
                 ifelse(Piece1 = 'empty',
                         true,
-                        (write('You cannot cross any player piece.\n\n'), fail))),
+                        ((ErrorMessageFlag -> write('You cannot cross any player piece.\n\n'); true), fail))),
                         
-        validateCrossMovements(Game, RowDest1, ColDest1, [SecondMove | PathRest], IsLongMove, PieceMoved, PieceCaptured).
+        validateCrossMovements(Game, RowDest1, ColDest1, [SecondMove | PathRest], IsFullMove, PieceMoved, PieceCaptured, ErrorMessageFlag).
 
 
 
@@ -229,10 +276,10 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
         verifyTurnsOnceAux(T, H, N1, C1).
 
 % --- Verify crossability for each barragoon piece ---
-verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
+verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType,ErrorMessageFlag):-
         (
                 BgType = 'barraX' -> (
-                        nl, write('You cannot cross an X barragoon piece.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You cannot cross an X barragoon piece.', nl, nl )); true),
                         fail
                 );
 
@@ -242,7 +289,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                                 ColSrc \= ColDest
                         );
 
-                        nl, write('You are crossing an All Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing an All Direction Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
 
@@ -253,7 +300,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                                 RowSrc2 = RowDest,
                                 ColSrc = ColDest
                         );
-                        nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'oDirD' -> (
@@ -262,7 +309,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                                 RowSrc2 = RowDest,
                                 ColSrc = ColDest
                         );
-                        nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'oDirR' -> (
@@ -271,7 +318,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                                 ColSrc2 = ColDest,
                                 RowSrc = RowDest
                         );
-                        nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'oDirL' -> (
@@ -280,7 +327,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                                 ColSrc2 = ColDest,
                                 RowSrc = RowDest
                         );
-                        nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Single Direction Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
 
@@ -298,7 +345,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                                         RowSrc = RowDest
                                 )
                         );
-                        nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'tDirV' -> (
@@ -314,7 +361,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                                         ColSrc = ColDest
                                 )
                         );
-                        nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
 
@@ -327,7 +374,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               ColBgR is ColBg+1,
                               ColDest = ColBgR
                         );
-                        nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'RtoU' -> (
@@ -338,7 +385,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               RowBgU is RowBg-1,
                               RowDest = RowBgU
                         );
-                        nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'UtoL' -> (
@@ -349,7 +396,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               ColBgL is ColBg-1,
                               ColDest = ColBgL
                         );
-                        nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'LtoD' -> (
@@ -360,7 +407,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               RowBgD is RowBg+1,
                               RowDest = RowBgD
                         );
-                        nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Right Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
 
@@ -373,7 +420,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               ColBgL is ColBg-1,
                               ColDest = ColBgL
                         );
-                        nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Left Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'LtoU' -> (
@@ -384,7 +431,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               RowBgU is RowBg-1,
                               RowDest = RowBgU
                         );
-                        nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Left Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'UtoR' -> (
@@ -395,7 +442,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               ColBgR is ColBg+1,
                               ColDest = ColBgR
                         );
-                        nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Left Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 );
                 BgType = 'RtoD' -> (
@@ -406,7 +453,7 @@ verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType):-
                               RowBgD is RowBg+1,
                               RowDest = RowBgD
                         );
-                        nl, write('You are crossing a Double Direction Barragoon in a wrong way.'), nl, nl,
+                        (ErrorMessageFlag -> (nl, write('You are crossing a Left Turn Barragoon in a wrong way.'), nl, nl); true),
                         fail
                 )
         ).
@@ -473,7 +520,7 @@ insertOneDirectionBg(Board, Row, Collumn, NewBoard):-
 insertTwoDirectionsBg(Board, Row, Collumn, NewBoard):-
         nl, write('In which diretion you want to set the barragoon?'),nl,
         write('The options are:'),nl,
-        write( '1-  - (Horizontal)'),nl,
+        write( '1-  <> (Horizontal)'),nl,
         write('2-  I (Vertical)'),nl,
         getCharThenEnter(Option),
         (
@@ -527,3 +574,85 @@ complementary('d','a').
 barragoonCaptured(barragoonPiece).
 playerPieceCaptured(playerPiece).
 emptyTile(empty).
+
+% --- Get Player Pieces ---
+
+getPlayerPieces(Game, List):-
+
+        getBoard(Game, Board),
+        getCurrentPlayer(Game, Player),
+
+        getPlayerPiecesAux(Board, Player, 0, 0, List).
+
+getPlayerPiecesAux(_,_,9,_,[]).
+getPlayerPiecesAux(Board,CurrentPlayer,Row,7,List) :-
+        Row1 is Row+1,
+        getPlayerPiecesAux(Board,CurrentPlayer,Row1,0,List).
+getPlayerPiecesAux(Board, CurrentPlayer, Row, Column, List) :-
+
+        Column1 is Column+1,
+
+        ifelse( getCell(Board, Row, Column, CurrentPlayer-_),
+                (
+                        getPlayerPiecesAux(Board, CurrentPlayer, Row, Column1, List1),
+                        List = [[Row, Column] | List1]
+                ),
+                getPlayerPiecesAux(Board, CurrentPlayer, Row, Column1, List)
+        ).
+
+
+% --- Count player pieces ---
+
+countPlayerPieces([], _, 0).
+countPlayerPieces([[] | BoardRest], CurrentPlayer, Count) :-
+        countPlayerPieces(BoardRest, CurrentPlayer, Count).
+
+countPlayerPieces([[CurrentPlayer-_ | RowRest] | BoardRest], CurrentPlayer, Count) :-
+        countPlayerPieces([RowRest | BoardRest], CurrentPlayer, N), 
+        Count is N+1 .
+
+countPlayerPieces([[_Piece | RowRest] | BoardRest], CurrentPlayer, Count) :-
+        countPlayerPieces([RowRest | BoardRest], CurrentPlayer, Count).
+
+
+% --- Count Moves Available ---
+
+countMovesAvailable(Game, Row, Column, Count) :-
+        getBoard(Game, Board),
+
+        getCell(Board, Row, Column, _Player-NDots),
+        availableMoves(NDots, AllMovesAvailable),
+
+        countMovesAvailableAux(Game, Row, Column, AllMovesAvailable, Count).
+
+countMovesAvailableAux(_,_,_,[],0).
+countMovesAvailableAux(Game, Row, Column, [Path | Tail], Count) :-
+        ifelse( (validatePath(Row, Column, Path, false), validateMove(Game, Row, Column, Path, _, false)),
+                (
+                        countMovesAvailableAux(Game, Row, Column, Tail, Count1),
+                        Count is Count1+1
+                ),
+                (
+                        countMovesAvailableAux(Game, Row, Column, Tail, Count)
+                )
+        ).
+
+% --- Count Moves Available for All Pieces of Player ---
+countMovesAvailableAllPieces(Game, Count) :- 
+        
+        getPlayerPieces(Game, PlayerPieces),
+        
+        countMovesAvailableAllPiecesAux(Game, PlayerPieces, Count).
+
+countMovesAvailableAllPiecesAux(_, [], 0).
+countMovesAvailableAllPiecesAux(Game, [[Row, Column] | RemainingPlayerPieces], Count):-
+        countMovesAvailable(Game, Row, Column, Count1),
+        countMovesAvailableAllPiecesAux(Game, RemainingPlayerPieces, Count2),
+        Count is Count1+Count2.
+
+
+
+
+
+
+

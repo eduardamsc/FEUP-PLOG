@@ -146,7 +146,7 @@ translate([bg-'oDirU'|R]) :- border, write('  A '), !, translate(R).
 translate([bg-'oDirD'|R]) :- border, write('  V '), !, translate(R).
 translate([bg-'oDirL'|R]) :- border, write(' <= '), !, translate(R).
 translate([bg-'oDirR'|R]) :- border, write(' => '), !, translate(R).
-translate([bg-'tDirH'|R]) :- border, write('  - '), !, translate(R).
+translate([bg-'tDirH'|R]) :- border, write(' <> '), !, translate(R).
 translate([bg-'tDirV'|R]) :- border, write('  I '), !, translate(R).
 translate([bg-'DtoR'|R]) :- border, write(' .> '), !, translate(R).
 translate([bg-'DtoL'|R]) :- border, write(' <. '), !, translate(R).
@@ -175,3 +175,17 @@ lettersAxis :- write('    A    B    C    D    E    F    G').
 horizontalBorder :- write('  ----------------------------------').
 
 border :- write('|').
+
+
+
+/* =================== TESTE ====================*/
+
+finalBoard([     [bg-'barraX', b-4, empty, b-2, b-3, b-4, bg-'barraX'],
+                 [empty, bg-'barraX', empty, empty, empty, bg-'barraX', empty],
+                 [empty, bg-'barraX', empty, empty, empty, empty, empty],
+                 [bg-'barraX', w-2, bg-'barraX', empty, empty, bg-barraX, empty],
+                 [empty, bg-'barraX', empty, empty, bg-barraX, empty, bg-barraX],
+                 [empty, bg-barraX, empty, empty, empty, bg-barraX, empty],
+                 [empty, empty, empty, empty, empty, empty, empty],
+                 [empty, empty, bg-'barraX', b-3, bg-'barraX', empty, empty],
+                 [empty, bg-'barraX', w-3, bg-'barraX', w-3, bg-'barraX', empty]]).
