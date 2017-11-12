@@ -59,6 +59,7 @@ displayRules :-
         write('|     direction.                                            |'),nl,
         write('|  8. Movements can only be vertical or horizontal, never   |'),nl, 
         write('|     diagonal.                                             |'),nl,
+        write('|  9. During a move, there can only be one 90º turn.        |'),nl, 
         lowerFrame,
         spacing(2),
         next, mainMenu, !.
