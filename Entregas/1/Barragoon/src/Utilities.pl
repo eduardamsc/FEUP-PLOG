@@ -117,7 +117,9 @@ not(_X).
 % -------------------------------------------------------------------------
 
 % --- Get cell value ---
-getCell(Board, Row, Column, Value) :-
+getCell(Game, Row, Column, Value) :-
+
+        getBoard(Game, Board),
         nth0(Row,Board,RowList),
         nth0(Column,RowList,Value).
 
@@ -135,25 +137,23 @@ getMode(Game, Mode):-
 
 % -- Get Empty Cells
 getEmptyPlaces(Game, List):-
-        
-        getBoard(Game, Board),
 
-        getEmptyPlacesAux(Board, 0, 0, List).
+        getEmptyPlacesAux(Game, 0, 0, List).
 
 getEmptyPlacesAux(_,9,_,[]).
-getEmptyPlacesAux(Board,Row,7,List) :-
+getEmptyPlacesAux(Game,Row,7,List) :-
         Row1 is Row+1,
-        getEmptyPlacesAux(Board,Row1,0,List).
-getEmptyPlacesAux(Board, Row, Column, List) :-
+        getEmptyPlacesAux(Game,Row1,0,List).
+getEmptyPlacesAux(Game, Row, Column, List) :-
 
         Column1 is Column+1,
 
-        ifelse( getCell(Board, Row, Column, empty),
+        ifelse( getCell(Game, Row, Column, empty),
                 (
-                        getEmptyPlacesAux(Board, Row, Column1, List1),
+                        getEmptyPlacesAux(Game, Row, Column1, List1),
                         List = [[Row, Column] | List1]
                 ),
-                getEmptyPlacesAux(Board, Row, Column1, List)
+                getEmptyPlacesAux(Game, Row, Column1, List)
         ).
 
 getPlayerType(Game, PlayerType) :-

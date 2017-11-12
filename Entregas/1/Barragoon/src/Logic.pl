@@ -19,8 +19,7 @@ playGame(Game) :-
         ifelse(isGameOver(Game),
                 (
                         switchPlayer(Game, EndGame),
-                        getCurrentPlayer(EndGame, Winner),
-                        gameOver(Winner)
+                        gameOver(EndGame)
                 ),
                 (
                         playerTurn(Game, UpdatedGame),
@@ -47,10 +46,11 @@ isGameOver(Game) :-
                 )
         ).
 
-gameOver(Winner) :-
+gameOver(Game) :-
 
         nl, write('And the Winner is...'), nl, nl, 
-
+        getCurrentPlayer(Game, Winner),
+        displayGame(Game),
         displayPlayerTurn(Winner),
         nl, write('Bye').
 
@@ -165,10 +165,9 @@ isFullMove(_Player-NDots, Path) :-
 %validateTile(+Game, +RowSrcPos, +ColSrcPos): make sure the position corresponds to a piece of the player
 validateTile(Game, RowSrc, ColSrc) :-
 
-        getBoard(Game, Board),
         getCurrentPlayer(Game, CurrentPlayer),
 
-        getCell(Board, RowSrc, ColSrc, Piece),
+        getCell(Game, RowSrc, ColSrc, Piece),
 
         Piece = CurrentPlayer-_.
 
@@ -178,11 +177,6 @@ validateTile(_Game, _RowSrc, _ColSrc) :-
         fail. 
 %go_back to repeat cycle
 
-% --- Check if it is a barragoon ---
-isBarragoon(Board, Row, Column, PlaceBarragoon) :-
-        getCell(Board, Row, Column, Piece),
-        validBarragoons(Barragoons),
-        ifelse(member(Piece,Barragoons), PlaceBarragoon is 0, PlaceBarragoon is 1).
 
 % -------------------------------------------------------------------------
 % ---------------------------- MOVEMENT RULES -----------------------------
@@ -220,9 +214,8 @@ validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured) :-
         
 
 validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured, ErrorMessageFlag) :- 
-        getBoard(Game, Board), 
 
-        getCell(Board, RowSrc,ColSrc, Piece),
+        getCell(Game, RowSrc,ColSrc, Piece),
         (
                 isShortMove(Piece, Path) -> IsFullMove is 0;
                 isFullMove(Piece, Path) -> IsFullMove is 1;
@@ -236,11 +229,10 @@ validateMove(Game, RowSrc, ColSrc, Path, PieceCaptured, ErrorMessageFlag) :-
 
 %validateCrossMovements -> verify capture issues.
 validateCrossMovements(Game, RowSrc, ColSrc, [LastMove], IsFullMove, PieceMoved, PieceCaptured, ErrorMessageFlag) :-
-        getBoard(Game, Board),
         getCurrentPlayer(Game, CurrentPlayer),
 
         getDestCellFromPath(RowSrc,ColSrc,[LastMove], RowDest, ColDest),
-        getCell(Board, RowDest, ColDest, Piece),
+        getCell(Game, RowDest, ColDest, Piece),
 
         
         ifelse(Piece = 'empty',
@@ -257,12 +249,11 @@ validateCrossMovements(Game, RowSrc, ColSrc, [LastMove], IsFullMove, PieceMoved,
 
 %validateCrossMovements -> verify cross issues.
 validateCrossMovements(Game, RowSrc, ColSrc, [FirstMove, SecondMove | PathRest], IsFullMove, PieceMoved,PieceCaptured, ErrorMessageFlag) :-
-        getBoard(Game, Board), 
 
         getDestCellFromPath(RowSrc,ColSrc,[FirstMove], RowDest1, ColDest1),
         getDestCellFromPath(RowDest1,ColDest1,[SecondMove], RowDest2, ColDest2),
 
-        getCell(Board, RowDest1, ColDest1, Piece1),
+        getCell(Game, RowDest1, ColDest1, Piece1),
 
 
         ifelse(Piece1 = bg-BgType,
@@ -496,7 +487,7 @@ playerPieceCaptured(Game, NewGame) :-
 
 % --- Insert new barragoon ---
 insertBarragoon(Game, NewGame) :-
-        displayGame(Game),
+        %displayGame(Game),
         
         getPlayerType(Game, PlayerType),
         repeat,
@@ -521,7 +512,7 @@ insertBarragoon(Game, NewGame) :-
                 PlayerType = player -> getCharThenEnter(Option);
                 PlayerType = bot -> (
                         random(1,7, OptionInt), 
-                        numberAxis(Numbers), 
+                        numbersAxis(Numbers), 
                         nth1(OptionInt, Numbers, Option)
                 )
         ),
@@ -547,7 +538,7 @@ insertOneDirectionBg(Game, Row, Column, NewGame):-
                 PlayerType = player -> getCharThenEnter(Option);
                 PlayerType = bot -> (
                         random(1,5, OptionInt), 
-                        numberAxis(Numbers), 
+                        numbersAxis(Numbers), 
                         nth1(OptionInt, Numbers, Option)
                 )
         ),        
@@ -568,7 +559,7 @@ insertTwoDirectionsBg(Game, Row, Column, NewGame):-
                 PlayerType = player -> getCharThenEnter(Option);
                 PlayerType = bot -> (
                         random(1,3, OptionInt), 
-                        numberAxis(Numbers), 
+                        numbersAxis(Numbers), 
                         nth1(OptionInt, Numbers, Option)
                 )
         ),        
@@ -589,7 +580,7 @@ insertTurnToTheLeft(Game, Row, Column, NewGame):-
                 PlayerType = player -> getCharThenEnter(Option);
                 PlayerType = bot -> (
                         random(1,5, OptionInt), 
-                        numberAxis(Numbers), 
+                        numbersAxis(Numbers), 
                         nth1(OptionInt, Numbers, Option)
                 )
         ),        
@@ -612,7 +603,7 @@ insertTurnToTheRight(Game, Row, Column, NewGame):-
                 PlayerType = player -> getCharThenEnter(Option);
                 PlayerType = bot -> (
                         random(1,5, OptionInt), 
-                        numberAxis(Numbers), 
+                        numbersAxis(Numbers), 
                         nth1(OptionInt, Numbers, Option)
                 )
         ),        
@@ -644,25 +635,24 @@ emptyTile(empty).
 
 getPlayerPieces(Game, List):-
 
-        getBoard(Game, Board),
         getCurrentPlayer(Game, Player),
 
-        getPlayerPiecesAux(Board, Player, 0, 0, List).
+        getPlayerPiecesAux(Game, Player, 0, 0, List).
 
 getPlayerPiecesAux(_,_,9,_,[]).
-getPlayerPiecesAux(Board,CurrentPlayer,Row,7,List) :-
+getPlayerPiecesAux(Game,CurrentPlayer,Row,7,List) :-
         Row1 is Row+1,
-        getPlayerPiecesAux(Board,CurrentPlayer,Row1,0,List).
-getPlayerPiecesAux(Board, CurrentPlayer, Row, Column, List) :-
+        getPlayerPiecesAux(Game,CurrentPlayer,Row1,0,List).
+getPlayerPiecesAux(Game, CurrentPlayer, Row, Column, List) :-
 
         Column1 is Column+1,
 
-        ifelse( getCell(Board, Row, Column, CurrentPlayer-_),
+        ifelse( getCell(Game, Row, Column, CurrentPlayer-_),
                 (
-                        getPlayerPiecesAux(Board, CurrentPlayer, Row, Column1, List1),
+                        getPlayerPiecesAux(Game, CurrentPlayer, Row, Column1, List1),
                         List = [[Row, Column] | List1]
                 ),
-                getPlayerPiecesAux(Board, CurrentPlayer, Row, Column1, List)
+                getPlayerPiecesAux(Game, CurrentPlayer, Row, Column1, List)
         ).
 
 
@@ -689,9 +679,8 @@ countMovesAvailable(Game, Row, Column, Count):-
 
 
 getMovesAvailable(Game, Row, Column, List) :-
-        getBoard(Game, Board),
 
-        getCell(Board, Row, Column, _Player-NDots),
+        getCell(Game, Row, Column, _Player-NDots),
         availableMoves(NDots, AllMovesAvailable),
 
         getMovesAvailableAux(Game, Row, Column, AllMovesAvailable, List).
