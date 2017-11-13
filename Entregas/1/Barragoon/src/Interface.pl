@@ -37,6 +37,7 @@ displayMainMenu :-
         write('|                                                           |'),nl,
         write('|                5 - Rules                                  |'),nl,
         write('|                6 - Quit                                   |'),nl,
+
         lowerFrame.
 
 displayRules :- 
