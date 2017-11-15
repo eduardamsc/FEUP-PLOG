@@ -293,7 +293,7 @@ verifyTurnsOnceAux([H|T], Z, N, C) :-
 verifyBarragoonCrossability(RowSrc,ColSrc,RowBg,ColBg,RowDest,ColDest,BgType,ErrorMessageFlag):-
         (
                 BgType = 'barraX' -> (
-                        (ErrorMessageFlag -> (nl, write('You cannot cross an X barragoon piece.', nl, nl )); true),
+                        (ErrorMessageFlag -> (nl, write('You cannot cross an X barragoon piece.'), nl, nl ); true),
                         fail
                 );
 
@@ -492,7 +492,7 @@ playerPieceCaptured(Game, NewGame) :-
 
 % --- Insert new barragoon ---
 insertBarragoon(Game, NewGame) :-
-        %displayGame(Game),
+        displayGame(Game),
         
         getPlayerType(Game, PlayerType),
         repeat,

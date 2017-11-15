@@ -15,5 +15,5 @@
 
 % --- START ---
 start :-
-        %clearScreen,
+        clearScreen,
         mainMenu.
