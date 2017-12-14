@@ -7,4 +7,4 @@ Element | College e-mail
 Leonardo Manuel Gomes Teixeira | up201502848@fe.up.pt
 Maria Eduarda Santos Cunha | up201506524@fe.up.pt
 
-Code developped PLOG (Logic Programming).
+Code developped Logic Programming (PLOG).
