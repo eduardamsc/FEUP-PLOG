@@ -1,19 +1,23 @@
 
 
 initialBoard([
-    [e, e, e, e, e],
-    [e, e, e, e, e],
-    [e, e, e, e, e],
-    [e, e, e, e, e],
-    [e, e, e, e, e]
+    [ee, ee, ee, ee, ee],
+    [ee, ee, ee, ee, ee],
+    [ee, ee, ee, ee, ee],
+    [ee, ee, ee, ee, ee],
+    [ee, ee, ee, ee, ee]
 ]).
 
+initialBoard(N, Board):-
+    fillListWithValue(Row, ee, N),
+    fillListWithValue(Board,Row,N).
+
 exampleBoard([
-    [e, 'A', e, 'B', 'C'],
-    ['B', e, 'C', e, 'A'],
-    ['A', 'C', e, e, 'B'],
-    ['C', e, 'B', 'A', e],
-    [e, 'B', 'A', 'C', e]
+    [ee, 'A', ee, 'B', 'C'],
+    ['B', ee, 'C', ee, 'A'],
+    ['A', 'C', ee, ee, 'B'],
+    ['C', ee, 'B', 'A', ee],
+    [ee, 'B', 'A', 'C', ee]
 ]).
 
 horizontalFrontierBoard([
@@ -25,6 +29,42 @@ horizontalFrontierBoard([
     [hf, hf, hf, hf, hf]
 ]).
 
+horizontalFrontierBoard(0, _):- !, write('BoardLength must be an odd number!'),fail.
+horizontalFrontierBoard(1, [[hf],[hf]]):-!.
+horizontalFrontierBoard(N, FrontierBoard):-
+    N2 is N-2,
+    horizontalFrontierBoard(N2,FrontierBoardRest),
+
+    fillListWithValue(Top, hf, N),
+    horizontalFrontierBoardAux(N, FrontierBoardRest, Center),
+    fillListWithValue(Bottom, hf, N),
+
+    append([Top], Center, TC),
+    append(TC, [Bottom], FrontierBoard).
+
+horizontalFrontierBoardAux(_,[],[]).
+horizontalFrontierBoardAux(N, [Row|Rest], Center):-
+    N1 is N-1,
+    length([Row|Rest],N1),
+    !,
+    horizontalFrontierBoardAux(N, Rest, CenterRest),
+
+    append([hf],Row,HFR),
+    append(HFR,[he],NewRow),
+
+    append([NewRow], CenterRest, Center).
+
+horizontalFrontierBoardAux(N, [Row|Rest], Center):-
+    !,
+    horizontalFrontierBoardAux(N, Rest, CenterRest),
+
+    append([he],Row,HER),
+    append(HER,[he],NewRow),
+
+    append([NewRow], CenterRest, Center).
+
+
+
 verticalFrontierBoard([
     [ve, ve, ve, ve, ve, vf],
     [vf, ve, ve, ve, vf, vf],
@@ -32,6 +72,35 @@ verticalFrontierBoard([
     [vf, vf, ve, ve, vf, vf],
     [vf, ve, ve, ve, ve, vf]
 ]).
+
+verticalFrontierBoard(0, _):- !, write('BoardLength must be an odd number!'),fail.
+verticalFrontierBoard(1, [[ve,vf]]):-!.
+verticalFrontierBoard(N, FrontierBoard):-
+    N2 is N-2,
+    verticalFrontierBoard(N2, FrontierBoardRest),
+
+    fillListWithValue(ATop, ve, N),
+    append(ATop, [vf], Top),
+
+    verticalFrontierBoardAux(N, FrontierBoardRest, Center),
+
+    N1 is N-1,
+    fillListWithValue(CBottom,ve,N1),
+    append([vf], CBottom, LBottom),
+    append(LBottom, [vf], Bottom),
+
+    append([Top], Center, TC),
+    append(TC, [Bottom], FrontierBoard).
+    
+verticalFrontierBoardAux(_,[],[]).
+verticalFrontierBoardAux(N, [Row|Rest], Center):-
+    verticalFrontierBoardAux(N, Rest, CenterRest),
+
+    append([vf],Row,VFR),
+    append(VFR,[vf],NewRow),
+
+    append([NewRow], CenterRest, Center).
+
 
 % -- Logo --
 titleFrame :-
@@ -50,16 +119,23 @@ titleFrame :-
         spacing(3).
 
 
-buildBoard([], [RowHF], [], [Result]):-
+buildBoard(Matrix, BoardLength, Board):-
+    horizontalFrontierBoard(BoardLength, HF),
+    verticalFrontierBoard(BoardLength, VF),
+    buildBoard(Matrix, HF, VF, BoardLength, Board).
+
+buildBoard([], [RowHF], [], _, [Result]):-
     horizontalFrontierParser(RowHF, Result).
 
-buildBoard([RowElems|RestElems], [RowHF|RestHF], [RowVF|RestVF], Result):-
-    buildBoard(RestElems, RestHF, RestVF, RestResult),
+buildBoard([RowElems|RestElems], [RowHF|RestHF], [RowVF|RestVF], BoardLength, Result):-
+    buildBoard(RestElems, RestHF, RestVF, BoardLength, RestResult),
+    
+    fillListWithValue(NEmpty, ee, BoardLength),
 
     horizontalFrontierParser(RowHF, RowHead),
-    verticalFrontierParser(RowVF, [e,e,e,e,e], RowContentTop),
+    verticalFrontierParser(RowVF, NEmpty, RowContentTop),
     verticalFrontierParser(RowVF, RowElems, RowContent),
-    verticalFrontierParser(RowVF, [e,e,e,e,e], RowContentBottom),
+    verticalFrontierParser(RowVF, NEmpty, RowContentBottom),
 
     Result = [RowHead, RowContentTop, RowContent, RowContentBottom|RestResult].
 
@@ -90,11 +166,11 @@ verticalFrontierParser([R1|Rest], [Elem|RemainingRow], Result):-
     translate(Elem, TElem),
     Result = [Ascii, TElem |RecResult].
 
-translate(e, '     ').
-translate(he, '+     ').
-translate(hf, '+-----').
-translate(ve, ' ').
-translate(vf, '|').
+translate(ee, '     '):-!.
+translate(he, '+     '):-!.
+translate(hf, '+-----'):-!.
+translate(ve, ' '):-!.
+translate(vf, '|'):-!.
 translate(X, Res):-
     atom_concat('  ', X, X1),
     atom_concat(X1, '  ', Res).
