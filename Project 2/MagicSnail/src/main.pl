@@ -22,16 +22,16 @@ start(Key, BoardLength):-
     buildBoard(Matrix, BoardLength, Board),
     displayBoard(Board),
 
-    statisticsMagicRule/* ,
+    statisticsMagicRule,
     
-    write('Another Solution?'), fail */.
+    anotherSolution.
     
 
 statisticsMagicRule:-
     nl,nl,nl,
     statistics(total_runtime,Runtime),
     nth1(2,Runtime, Time),
-    write('Runtime: '), write(Time), write(' ms.').
+    write('Runtime: '), write(Time), write(' ms.'),nl,nl,nl.
 
 test(N):-
     initialBoard(N,Matrix),
