@@ -7,6 +7,7 @@
 
 
 % --- START ---
+% start(+Key, +BoardLength) -- Starts the execution of MagicSnail
 start(Key, BoardLength):-
 
 
@@ -25,14 +26,14 @@ start(Key, BoardLength):-
 
     buildBoard(Matrix, BoardLength, Board),
 
-    % spacing(3),
     displayBoard(Board),
     
     anotherSolution,
 
     statisticsMagicRule(Runtime).
-    
-statisticsMagicRule(Runtime:-
+
+% statisticsMagicRule(+Runtime) -- Show runtime of MagicSnail
+statisticsMagicRule(Runtime):-
     nth1(2,Runtime, Time),
     write('Runtime: '), write(Time), write(' ms.'),
     spacing(2).
