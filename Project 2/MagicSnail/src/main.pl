@@ -2,6 +2,8 @@
 :- include('logic.pl').
 :- include('utils.pl').
 :- use_module(library(lists)).
+:- use_module(library(system)).
+:- use_module(library(timeout)).
 
 
 % --- START ---
@@ -10,14 +12,25 @@ start(Key, BoardLength):-
     titleFrame,
     atom_chars(Key,KeyList),
     length(KeyList, KeyLength),
+
     magicSnail(IndexList,BoardLength,KeyLength),
+
     integerToAtomUsingKey(IndexList, AtomList, KeyList),
 
     listToMatrix(AtomList, BoardLength, Matrix),
 
     buildBoard(Matrix, BoardLength, Board),
     displayBoard(Board)/* ,
-    fail */.
+    fail */,
+
+    statisticsMagicRule.
+    
+
+statisticsMagicRule:-
+    nl,nl,nl,
+    statistics(total_runtime,Runtime),
+    nth1(2,Runtime, Time),
+    write('Runtime: '), write(Time), write(' ms.').
 
 % test(N):-
 %     initialBoard(N,Matrix),

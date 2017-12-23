@@ -8,7 +8,7 @@ magicSnail(List, BoardLength, KeyLength):-
 
     oncePerRow(List, BoardLength, KeyLength),
     oncePerColumn(List, BoardLength, KeyLength),
-    magicSnailRule(List, BoardLength),
+    magicSnailRule(List, BoardLength, KeyLength),
 
     labeling([], List).
 
@@ -73,28 +73,41 @@ magicSnailRoute(N,Route):-
     
     
 
-magicSnailRule(List, BoardLength):-
+magicSnailRule(List, BoardLength, KeyLength):-
     magicSnailRoute(BoardLength, Route),
     listToMagicSnail(List,Route, BoardLength,MagicSnail),
-    orderedListWithCiclesIgnoring0s(MagicSnail,BoardLength).
+    orderedListWithCiclesIgnoring0s(MagicSnail,BoardLength, KeyLength).
+    
+orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength):-
+    orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength,1,0).
 
-orderedListWithCiclesIgnoring0s(List,BoardLength):-
-    orderedListWithCiclesIgnoring0s(List,BoardLength,1,0).
-
-orderedListWithCiclesIgnoring0s(_,BoardLength, N,_):-
+orderedListWithCiclesIgnoring0s(_,BoardLength,_, N,_):-
     N>BoardLength.
-orderedListWithCiclesIgnoring0s(List,BoardLength,Occurrence, LastOccurrence):-
+orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength,Occurrence, LastOccurrencePrev):-
 
-    nthOccurrence(List, 1, Occurrence, Index1),
-    nthOccurrence(List, 2, Occurrence, Index2),
-    nthOccurrence(List, 3, Occurrence, Index3),
-
-    LastOccurrence#<Index1,
-    Index1#<Index2,
-    Index2#<Index3,
+    % nthOccurrence(List, 1, Occurrence, Index1),
+    % nthOccurrence(List, 2, Occurrence, Index2),
+    % nthOccurrence(List, 3, Occurrence, Index3),
+    % nthOccurrence(List, 4, Occurrence, Index4),
+    
+    % LastOccurrence#<Index1,
+    % Index1#<Index2,
+    % Index2#<Index3,
+    % Index3#<Index4,
+    fillListIndexEqualsValue(KeyLength, Values),
+    nthOccurrenceListing(List, Values, Occurrence, LastOccurrencePrev, LastOccurrenceNext),
 
     NextOccurrence is Occurrence+1,
-    orderedListWithCiclesIgnoring0s(List,BoardLength,NextOccurrence, Index3).
+    orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength,NextOccurrence, LastOccurrenceNext).
+
+
+nthOccurrenceListing(_, [], _, LastOccurrence, LastOccurrence).
+nthOccurrenceListing(List, [Value|Rest], Occurrence, LastOccurrencePrev, LastOccurrenceNext):-
+    nthOccurrence(List, Value, Occurrence, Index),
+
+    LastOccurrencePrev#<Index,
+    
+    nthOccurrenceListing(List, Rest, Occurrence, Index, LastOccurrenceNext).
 
         
 numberOfOcurrencesUntil(_,_,Count,Count,Index,Index).
