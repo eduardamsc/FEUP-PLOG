@@ -32,7 +32,6 @@ start(Key, BoardLength):-
 
     statisticsMagicRule(Runtime).
     
-
 statisticsMagicRule(Runtime:-
     nth1(2,Runtime, Time),
     write('Runtime: '), write(Time), write(' ms.'),
