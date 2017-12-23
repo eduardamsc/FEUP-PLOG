@@ -1,5 +1,6 @@
 :- use_module(library(clpfd)).
 
+% magicSnail(+List, +BoardLength, +KeyLength) -- Main contraints function
 magicSnail(List, BoardLength, KeyLength):-
     
     ListLength is BoardLength*BoardLength,
@@ -13,6 +14,7 @@ magicSnail(List, BoardLength, KeyLength):-
     labeling([], List).
 
 
+% oncePerRow(+List, +BoardLength, +KeyLength) -- Constraints the List to have only one value per Row
 oncePerRow([],_,_):-!.
 oncePerRow(List, BoardLength, KeyLength):-
     takeFirstNElemsFromList(BoardLength, List, FirstElems),
@@ -22,7 +24,7 @@ oncePerRow(List, BoardLength, KeyLength):-
     fillListIndexEqualsValue(KeyLength,Values),
     countEqualsList(Values, FirstElems, 1).
 
-
+% oncePerColumn(+List, +BoardLength, +KeyLength) -- Constraints the List to have only one value per Column
 oncePerColumn([],_,_):-!.
 oncePerColumn(List,BoardLength, KeyLength):- oncePerColumn(List,BoardLength, KeyLength, 1).
 
@@ -36,8 +38,9 @@ oncePerColumn(List, BoardLength, KeyLength, N1):-
 
     oncePerRow(Column, BoardLength, KeyLength).
 
-magicSnailRoute([d,d,d,d,s,s,s,s,a,a,a,a,w,w,w,d,d,d,s,s,a,a,w,d]).
+% magicSnailRoute([d,d,d,d,s,s,s,s,a,a,a,a,w,w,w,d,d,d,s,s,a,a,w,d]).
 
+% magicSnailRoute(+N,-Route) -- Creates the Snail Route
 magicSnailRoute(1,[]):-!.
 magicSnailRoute(2,[d,s,a]):-!.
 magicSnailRoute(N,Route):-
@@ -59,6 +62,7 @@ magicSnailRoute(N,Route):-
     
     
 
+% magicSnailRule(List, BoardLength, KeyLength) -- Magic Snail Rule
 magicSnailRule(List, BoardLength, KeyLength):-
     magicSnailRoute(BoardLength, Route),
     listToMagicSnail(List,Route, BoardLength,MagicSnail),
