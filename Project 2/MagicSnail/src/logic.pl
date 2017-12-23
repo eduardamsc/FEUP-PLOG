@@ -71,15 +71,6 @@ orderedListWithCiclesIgnoring0s(_,BoardLength,_, N,_):-
     N>BoardLength.
 orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength,Occurrence, LastOccurrencePrev):-
 
-    % nthOccurrence(List, 1, Occurrence, Index1),
-    % nthOccurrence(List, 2, Occurrence, Index2),
-    % nthOccurrence(List, 3, Occurrence, Index3),
-    % nthOccurrence(List, 4, Occurrence, Index4),
-    
-    % LastOccurrence#<Index1,
-    % Index1#<Index2,
-    % Index2#<Index3,
-    % Index3#<Index4,
     fillListIndexEqualsValue(KeyLength, Values),
     nthOccurrenceListing(List, Values, Occurrence, LastOccurrencePrev, LastOccurrenceNext),
 
@@ -87,7 +78,7 @@ orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength,Occurrence, LastOccu
     orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength,NextOccurrence, LastOccurrenceNext).
 
 
-nthOccurrenceListing(_, [], _, LastOccurrence, LastOccurrence).
+nthOccurrenceListing(_, [], _, LastOccurrence, LastOccurrence):-!.
 nthOccurrenceListing(List, [Value|Rest], Occurrence, LastOccurrencePrev, LastOccurrenceNext):-
     nthOccurrence(List, Value, Occurrence, Index),
 

@@ -182,13 +182,22 @@ displayRow([Elem|Rest]):-
 
 
 % -- Visualization --
-spacing(Lines) :-
-        spacing(0, Lines).
-spacing(Line, Limit) :-
-        Line < Limit,
-        LineInc is Line + 1,
-        nl,
-        spacing(LineInc, Limit).
-spacing(_,_).
+spacing(0):-!.
+spacing(N):-
+    N1 is N-1,
+    spacing(N1),
+    nl.
 
 clearScreen :- spacing(50), !.
+
+getCharThenEnter(X) :-
+        get_char(X),
+        get_char(_), !.
+
+anotherSolution:-
+    spacing(2),
+    write('Another Solution? (y/n) '),
+    spacing(2),
+    getCharThenEnter(X),
+    spacing(3),
+    switch(X,[y:fail, n:true]).

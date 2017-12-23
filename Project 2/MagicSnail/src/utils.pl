@@ -129,15 +129,7 @@ switch(X, [Case:Then|Cases]) :-
         switch(X, Cases)
     ).
 
-% --- gui --- 
-getCharThenEnter(X) :-
-        get_char(X),
-        get_char(_), !.
 
-anotherSolution:-
-    write('Another Solution? (y/n)'), nl,
-    getCharThenEnter(X),
-    switch(X,[y:fail, n:true]).
 
 
     
