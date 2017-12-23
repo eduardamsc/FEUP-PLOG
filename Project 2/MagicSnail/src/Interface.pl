@@ -29,7 +29,7 @@ horizontalFrontierBoard([
     [hf, hf, hf, hf, hf]
 ]).
 
-horizontalFrontierBoard(0, _):- !, write('BoardLength must be an odd number!'),fail.
+horizontalFrontierBoard(0, [[]]):- !.
 horizontalFrontierBoard(1, [[hf],[hf]]):-!.
 horizontalFrontierBoard(N, FrontierBoard):-
     N2 is N-2,
@@ -73,7 +73,7 @@ verticalFrontierBoard([
     [vf, ve, ve, ve, ve, vf]
 ]).
 
-verticalFrontierBoard(0, _):- !, write('BoardLength must be an odd number!'),fail.
+verticalFrontierBoard(0, []):- !.
 verticalFrontierBoard(1, [[ve,vf]]):-!.
 verticalFrontierBoard(N, FrontierBoard):-
     N2 is N-2,
@@ -142,7 +142,7 @@ buildBoard([RowElems|RestElems], [RowHF|RestHF], [RowVF|RestVF], BoardLength, Re
 
 displayBoard([]).
 displayBoard([Row|Rest]):-
-    write('               '),
+    write('      '),
     displayRow(Row), nl,
     displayBoard(Rest).
     

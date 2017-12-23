@@ -20,10 +20,11 @@ start(Key, BoardLength):-
     listToMatrix(AtomList, BoardLength, Matrix),
 
     buildBoard(Matrix, BoardLength, Board),
-    displayBoard(Board)/* ,
-    fail */,
+    displayBoard(Board),
 
-    statisticsMagicRule.
+    statisticsMagicRule/* ,
+    
+    write('Another Solution?'), fail */.
     
 
 statisticsMagicRule:-
@@ -32,10 +33,10 @@ statisticsMagicRule:-
     nth1(2,Runtime, Time),
     write('Runtime: '), write(Time), write(' ms.').
 
-% test(N):-
-%     initialBoard(N,Matrix),
-%     horizontalFrontierBoard(N, HF),
-%     verticalFrontierBoard(N, VF),
+test(N):-
+    initialBoard(N,Matrix),
+    horizontalFrontierBoard(N, HF),
+    verticalFrontierBoard(N, VF),
 
-%     buildBoard(Matrix, HF, VF, N, Board),
-%     displayBoard(Board).
+    buildBoard(Matrix, HF, VF, N, Board),
+    displayBoard(Board).

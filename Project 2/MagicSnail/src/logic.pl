@@ -12,21 +12,6 @@ magicSnail(List, BoardLength, KeyLength):-
 
     labeling([], List).
 
-test(List, BoardLength):-
-    ListLength is BoardLength*BoardLength,
-
-    KeyLength is 2,
-
-    length(List, ListLength),
-    domain(List, 0, KeyLength),
-
-    oncePerRow(List, BoardLength, KeyLength),
-    oncePerColumn(List, BoardLength, KeyLength),
-    magicSnailRule(List, BoardLength),
-
-    labeling([], List),
-    write(List).
-
 
 oncePerRow([],_,_):-!.
 oncePerRow(List, BoardLength, KeyLength):-
@@ -54,6 +39,7 @@ oncePerColumn(List, BoardLength, KeyLength, N1):-
 magicSnailRoute([d,d,d,d,s,s,s,s,a,a,a,a,w,w,w,d,d,d,s,s,a,a,w,d]).
 
 magicSnailRoute(1,[]):-!.
+magicSnailRoute(2,[d,s,a]):-!.
 magicSnailRoute(N,Route):-
     N2 is N-2,
     magicSnailRoute(N2, RouteRest),
@@ -77,7 +63,7 @@ magicSnailRule(List, BoardLength, KeyLength):-
     magicSnailRoute(BoardLength, Route),
     listToMagicSnail(List,Route, BoardLength,MagicSnail),
     orderedListWithCiclesIgnoring0s(MagicSnail,BoardLength, KeyLength).
-    
+
 orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength):-
     orderedListWithCiclesIgnoring0s(List,BoardLength, KeyLength,1,0).
 
