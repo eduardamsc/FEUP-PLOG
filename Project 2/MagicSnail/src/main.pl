@@ -8,12 +8,16 @@
 
 % --- START ---
 start(Key, BoardLength):-
+
+
     clearScreen,
     titleFrame,
     atom_chars(Key,KeyList),
     length(KeyList, KeyLength),
 
+    statistics(walltime,_),
     magicSnail(IndexList,BoardLength,KeyLength),
+    statistics(walltime,Runtime),
 
     integerToAtomUsingKey(IndexList, AtomList, KeyList),
 
@@ -26,11 +30,10 @@ start(Key, BoardLength):-
     
     anotherSolution,
 
-    statisticsMagicRule.
+    statisticsMagicRule(Runtime).
     
 
-statisticsMagicRule:-
-    statistics(runtime,Runtime),
+statisticsMagicRule(Runtime:-
     nth1(2,Runtime, Time),
     write('Runtime: '), write(Time), write(' ms.'),
     spacing(2).
