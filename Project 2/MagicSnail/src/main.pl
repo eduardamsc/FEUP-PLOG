@@ -16,9 +16,11 @@ start(Key, BoardLength):-
     atom_chars(Key,KeyList),
     length(KeyList, KeyLength),
 
-    statistics(walltime,_),
+    statistics(walltime,StartTime),
     magicSnail(IndexList,BoardLength,KeyLength),
-    statistics(walltime,Runtime),
+    statistics(walltime,EndTime),
+    
+    statisticsMagicRule(StartTime, EndTime),
 
     integerToAtomUsingKey(IndexList, AtomList, KeyList),
 
@@ -28,13 +30,18 @@ start(Key, BoardLength):-
 
     displayBoard(Board),
     
-    anotherSolution,
+    anotherSolution.
 
-    statisticsMagicRule(Runtime).
 
 % statisticsMagicRule(+Runtime) -- Show runtime of MagicSnail
-statisticsMagicRule(Runtime):-
-    nth1(2,Runtime, Time),
-    write('Runtime: '), write(Time), write(' ms.'),
+statisticsMagicRule(StartTime, EndTime):-
+
+
+    nth1(1,StartTime, StartTimeMs),
+    nth1(1,EndTime, EndTimeMs),
+
+    RunTime is EndTimeMs - StartTimeMs,
+
+    write('Runtime: '), write(RunTime), write(' ms.'),
     spacing(2).
 
